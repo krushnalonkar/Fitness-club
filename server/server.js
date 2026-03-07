@@ -40,6 +40,18 @@ app.get("/", (req, res) => {
   res.send("API is running locally... 🚀");
 });
 
+// Diagnostic Ping for Frontend Proxy Test
+app.get("/api/ping", (req, res) => res.json({ message: "BACKEND-OK", time: new Date() }));
+
+// 🛡️ Global 404 JSON Handler (CRITICAL for debugging)
+app.use((req, res) => {
+  console.warn(`[404-NOT-FOUND] ${req.method} ${req.url}`);
+  res.status(404).json({
+    message: `The endpoint ${req.method} ${req.url} does not exist on this server. Check your routes!`,
+    suggestion: "If this route SHOULD exist, restart your backend server."
+  });
+});
+
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`🚀 [SERVER-LATEST-STABLE] Running on port ${PORT} 🔥`);
