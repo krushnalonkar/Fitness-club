@@ -210,6 +210,67 @@ const UserDashboard = () => {
                     </div>
                 </div>
 
+                {/* Assigned Workouts & Sessions */}
+                <div className="grid lg:grid-cols-2 gap-8 mt-8">
+                    {/* Workouts Card */}
+                    <div className="bg-dark-200 p-6 rounded-2xl border border-dark-400">
+                        <div className="flex items-center gap-3 mb-6">
+                            <FaDumbbell className="text-blue-500 text-2xl" />
+                            <h3 className="text-xl font-semibold text-white">Daily <span className="text-blue-500">Workouts</span></h3>
+                        </div>
+                        {user.assignedWorkouts && user.assignedWorkouts.length > 0 ? (
+                            <div className="space-y-4">
+                                {user.assignedWorkouts.slice().reverse().map((workout, idx) => (
+                                    <div key={idx} className="bg-dark-300 p-4 rounded-xl border border-dark-400 hover:border-blue-500/30 transition">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <p className="text-white font-bold">{workout.workoutName}</p>
+                                                <p className="text-gray-500 text-xs font-medium">{workout.repsSets} • {workout.cardioSteps} steps</p>
+                                            </div>
+                                            <span className={`text-[9px] px-2 py-0.5 rounded-full font-black uppercase tracking-widest ${workout.status === 'completed' ? 'bg-green-500/10 text-green-500' : 'bg-blue-500/10 text-blue-500'}`}>
+                                                {workout.status}
+                                            </span>
+                                        </div>
+                                        <p className="text-[8px] text-gray-600 mt-2 font-bold uppercase tracking-widest">{new Date(workout.date).toLocaleDateString()}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-10 text-center text-gray-500 text-sm italic border border-dark-400 rounded-2xl border-dashed">
+                                No workouts assigned yet.
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Sessions Card */}
+                    <div className="bg-dark-200 p-6 rounded-2xl border border-dark-400">
+                        <div className="flex items-center gap-3 mb-6">
+                            <FaClock className="text-green-500 text-2xl" />
+                            <h3 className="text-xl font-semibold text-white">Trainer <span className="text-green-500">Sessions</span></h3>
+                        </div>
+                        {user.assignedSessions && user.assignedSessions.length > 0 ? (
+                            <div className="space-y-4">
+                                {user.assignedSessions.slice().reverse().map((session, idx) => (
+                                    <div key={idx} className="bg-dark-300 p-4 rounded-xl border border-dark-400 hover:border-green-500/30 transition">
+                                        <div className="flex justify-between items-start">
+                                            <div>
+                                                <p className="text-white font-bold">{session.sessionName}</p>
+                                                <p className="text-gray-500 text-xs font-medium">with Coach {session.coach}</p>
+                                            </div>
+                                            <p className="text-green-400 text-xs font-black">{session.time}</p>
+                                        </div>
+                                        <p className="text-[8px] text-gray-600 mt-2 font-bold uppercase tracking-widest">{new Date(session.date).toLocaleDateString()}</p>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="py-10 text-center text-gray-500 text-sm italic border border-dark-400 rounded-2xl border-dashed">
+                                No sessions scheduled.
+                            </div>
+                        )}
+                    </div>
+                </div>
+
                 <div className="bg-dark-200 mt-8 p-6 md:p-8 rounded-2xl border border-dark-400 shadow-lg">
                     <h3 className="text-xl font-semibold text-white mb-4">Leave Feedback / Review</h3>
                     <p className="text-gray-400 mb-6 text-sm">Share your fitness journey and experience with us!</p>
@@ -250,7 +311,7 @@ const UserDashboard = () => {
                         <button
                             type="submit"
                             disabled={isSubmittingFeedback}
-                            className={`px-8 py-3 bg-purple hover:bg-purple-700 text-white font-bold rounded-xl transition-all active:scale-95 ${isSubmittingFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            className={`px-8 py-3 bg-purple hover:bg-purple-700 text-white font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${isSubmittingFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
                         >
                             {isSubmittingFeedback ? 'Submitting...' : 'Submit Feedback'}
                         </button>

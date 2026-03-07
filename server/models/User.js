@@ -54,6 +54,29 @@ const userSchema = new mongoose.Schema({
             default: Date.now
         }
     }],
+    assignedWorkouts: [{
+        workoutName: String,
+        repsSets: String,
+        cardioSteps: Number,
+        status: {
+            type: String,
+            enum: ['pending', 'completed'],
+            default: 'pending'
+        },
+        date: {
+            type: Date,
+            default: Date.now
+        }
+    }],
+    assignedSessions: [{
+        sessionName: String,
+        time: String,
+        coach: String,
+        date: {
+            type: Date,
+            default: Date.now
+        }
+    }],
     resetPasswordToken: String,
     resetPasswordExpire: Date
 }, {

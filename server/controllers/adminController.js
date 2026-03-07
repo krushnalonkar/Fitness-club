@@ -122,4 +122,67 @@ const getUserDetailsByAdmin = async (req, res) => {
     }
 };
 
-module.exports = { getAdminStats, adminLogin, getUserDetailsByAdmin };
+const updateUserProgressByAdmin = async (req, res) => {
+    try {
+        console.log(`[Admin Progress Update] Incoming ID: ${req.params.id}, Body:`, req.body);
+        const { weight, height } = req.body;
+        const user = await User.findById(req.params.id);
+        if (user) {
+            user.progress.push({
+                weight: parseFloat(weight),
+                height: parseFloat(height),
+                date: new Date()
+            });
+            await user.save();
+            console.log(`[Admin Progress Success] Updated weights for user: ${user.name}`);
+            res.json(user);
+        } else {
+            console.warn(`[Admin Progress Warning] User ID ${req.params.id} not found in database!`);
+            res.status(404).json({ message: `User with ID ${req.params.id} not found.` });
+        }
+    } catch (error) {
+        console.error(`[Admin Progress Error]`, error.message);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const assignWorkoutByAdmin = async (req, res) => {
+    try {
+        const { workoutName, repsSets, cardioSteps } = req.body;
+        const user = await User.findById(req.params.id);
+        if (user) {
+            user.assignedWorkouts.push({ workoutName, repsSets, cardioSteps, date: new Date() });
+            await user.save();
+            res.json(user);
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const assignSessionByAdmin = async (req, res) => {
+    try {
+        const { sessionName, time, coach } = req.body;
+        const user = await User.findById(req.params.id);
+        if (user) {
+            user.assignedSessions.push({ sessionName, time, coach, date: new Date() });
+            await user.save();
+            res.json(user);
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+module.exports = {
+    getAdminStats,
+    adminLogin,
+    getUserDetailsByAdmin,
+    updateUserProgressByAdmin,
+    assignWorkoutByAdmin,
+    assignSessionByAdmin
+};

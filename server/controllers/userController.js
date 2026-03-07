@@ -16,6 +16,8 @@ const getUserDashboard = async (req, res) => {
                 role: user.role,
                 bookedPlans: user.bookedPlans,
                 progress: user.progress,
+                assignedWorkouts: user.assignedWorkouts,
+                assignedSessions: user.assignedSessions,
             });
         } else {
             res.status(404).json({ message: 'User not found' });
@@ -134,9 +136,11 @@ const bookPlan = async (req, res) => {
             const randomTrainerIndex = Math.floor(Math.random() * availableTrainers.length);
             const assignedTrainer = availableTrainers[randomTrainerIndex];
 
+            const priceNum = typeof price === 'string' ? parseFloat(price.replace(/[^0-9.]/g, '')) : price;
+
             const newPlan = {
                 planName,
-                price: parseFloat(price.replace(/[^0-9.]/g, '')),
+                price: priceNum,
                 duration,
                 orderId: `PAY-${Math.floor(Math.random() * 900000 + 100000)}`,
                 paymentStatus: 'completed',
