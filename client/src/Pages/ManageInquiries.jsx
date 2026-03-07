@@ -122,13 +122,13 @@ const ManageInquiries = () => {
                                                         {item.status}
                                                     </span>
                                                 </div>
-                                                <p className="text-gray-400 text-sm leading-relaxed mb-4">{item.message}</p>
+                                                <p className="text-gray-200 text-base leading-relaxed mb-6 font-medium bg-dark-300/30 p-4 rounded-xl border border-dark-400/50">{item.message}</p>
 
                                                 {item.adminReply && (
-                                                    <div className="mb-4 p-4 bg-dark-300/50 rounded-xl border border-dark-400/50 relative overflow-hidden">
+                                                    <div className="mb-4 p-5 bg-dark-300 rounded-xl border border-dark-400 relative overflow-hidden">
                                                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-green-500"></div>
-                                                        <p className="text-[9px] text-green-500 font-bold uppercase mb-1 tracking-widest">Admin Response</p>
-                                                        <p className="text-gray-300 text-xs italic">"{item.adminReply}"</p>
+                                                        <p className="text-[10px] text-green-500 font-bold uppercase mb-2 tracking-widest">Admin Response</p>
+                                                        <p className="text-white text-sm leading-relaxed font-medium">{item.adminReply}</p>
                                                     </div>
                                                 )}
 
@@ -188,8 +188,8 @@ const ManageInquiries = () => {
 
                             <div className="mb-6">
                                 <p className="text-[10px] text-gray-500 font-black uppercase tracking-widest mb-2">Original Message from {selectedInquiry.name}</p>
-                                <div className="p-4 bg-dark-300/40 rounded-xl border border-dark-400 text-gray-400 text-sm italic">
-                                    "{selectedInquiry.message}"
+                                <div className="p-5 bg-dark-300 rounded-2xl border border-dark-400 text-white text-base leading-relaxed font-medium">
+                                    {selectedInquiry.message}
                                 </div>
                             </div>
 

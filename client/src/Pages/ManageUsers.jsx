@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { FaTrash, FaUserEdit, FaSearch, FaUserCircle, FaTimes, FaEnvelope, FaUser } from 'react-icons/fa';
+import { FaTrash, FaUserEdit, FaSearch, FaUserCircle, FaTimes, FaEnvelope, FaUser, FaPhoneAlt } from 'react-icons/fa';
 import AdminSidebar from '../Components/AdminSidebar';
 import AdminHeader from '../Components/AdminHeader';
 import axios from 'axios';
@@ -14,7 +14,7 @@ const ManageUsers = () => {
     const [message, setMessage] = useState('');
     const [showUpdateModal, setShowUpdateModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
-    const [updateForm, setUpdateForm] = useState({ name: '', email: '', role: '' });
+    const [updateForm, setUpdateForm] = useState({ name: '', email: '', phone: '', role: '' });
 
     useEffect(() => {
         fetchUsers();
@@ -56,7 +56,7 @@ const ManageUsers = () => {
 
     const handleEditClick = (user) => {
         setSelectedUser(user);
-        setUpdateForm({ name: user.name, email: user.email, role: user.role });
+        setUpdateForm({ name: user.name, email: user.email, phone: user.phone || '', role: user.role });
         setShowUpdateModal(true);
     };
 
@@ -79,7 +79,8 @@ const ManageUsers = () => {
 
     const filteredUsers = users.filter(user =>
         user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchTerm.toLowerCase())
+        user.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (user.phone && user.phone.includes(searchTerm))
     );
 
     return (
@@ -104,7 +105,7 @@ const ManageUsers = () => {
                             <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
                             <input
                                 type="text"
-                                placeholder="Search by name or email..."
+                                placeholder="Search by name, email or phone..."
                                 value={searchTerm}
                                 onChange={(e) => setSearchTerm(e.target.value)}
                                 className="w-full pl-12 pr-4 py-3 bg-dark-100/50 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition"
@@ -128,7 +129,7 @@ const ManageUsers = () => {
                                 <thead className="bg-dark-300/50 border-b border-dark-400">
                                     <tr>
                                         <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">User Details</th>
-                                        <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Email Address</th>
+                                        <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Contact Info</th>
                                         <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Access Level</th>
                                         <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Join Date</th>
                                         <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest text-center">Actions</th>
@@ -169,8 +170,9 @@ const ManageUsers = () => {
                                                             <span className="text-white text-sm font-semibold tracking-tight">{user.name}</span>
                                                         </div>
                                                     </td>
-                                                    <td className="px-6 py-4 text-gray-400 text-xs">
-                                                        {user.email}
+                                                    <td className="px-6 py-4">
+                                                        <p className="text-gray-400 text-xs">{user.email}</p>
+                                                        <p className="text-purple/70 text-[10px] font-bold mt-0.5">{user.phone}</p>
                                                     </td>
                                                     <td className="px-6 py-4">
                                                         <span className={`px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest ${user.role === 'admin'
@@ -259,8 +261,20 @@ const ManageUsers = () => {
                                         type="email"
                                         value={updateForm.email}
                                         onChange={(e) => setUpdateForm({ ...updateForm, email: e.target.value })}
+                                        className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition mb-4"
+                                        required
+                                    />
+
+                                    <label className="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-2 flex items-center gap-2">
+                                        <FaPhoneAlt size={10} className="text-purple" /> Mobile Number
+                                    </label>
+                                    <input
+                                        type="tel"
+                                        value={updateForm.phone}
+                                        onChange={(e) => setUpdateForm({ ...updateForm, phone: e.target.value })}
                                         className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition"
                                         required
+                                        pattern="[0-9]{10}"
                                     />
                                 </div>
 

@@ -7,7 +7,7 @@ import banner from '../assets/banner-2.jpg';
 
 const Login = () => {
     const [formData, setFormData] = useState({
-        email: '',
+        identifier: '',
         password: ''
     });
     const [showPassword, setShowPassword] = useState(false);
@@ -26,7 +26,7 @@ const Login = () => {
         setLoading(true);
 
         try {
-            const data = await login(formData.email, formData.password);
+            const data = await login(formData.identifier, formData.password);
             if (data.role === 'admin') {
                 navigate('/admin/dashboard');
             } else {
@@ -71,14 +71,14 @@ const Login = () => {
                 <form className="space-y-6" onSubmit={handleSubmit}>
                     {error && <div className="bg-red-500/10 border border-red-500/50 text-red-500 px-4 py-2 rounded-lg text-sm mb-4 text-center">{error}</div>}
                     <div>
-                        <label className="block text-gray-300 text-sm font-medium mb-2">Email Address</label>
+                        <label className="block text-gray-300 text-sm font-medium mb-2">Email or Phone Number</label>
                         <input
-                            type="email"
-                            name="email"
-                            value={formData.email}
+                            type="text"
+                            name="identifier"
+                            value={formData.identifier}
                             onChange={handleChange}
                             required
-                            placeholder="Enter your email"
+                            placeholder="Enter your email or 10-digit phone"
                             className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition"
                         />
                     </div>

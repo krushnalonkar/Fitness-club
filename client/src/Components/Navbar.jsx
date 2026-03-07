@@ -14,7 +14,7 @@ const Navbar = () => {
     const navigate = useNavigate();
     const [isEditingProfile, setIsEditingProfile] = useState(false);
     const [isChangingPassword, setIsChangingPassword] = useState(false);
-    const [formData, setFormData] = useState({ name: '', email: '', currentPassword: '', newPassword: '', confirmNewPassword: '', height: '', weight: '' });
+    const [formData, setFormData] = useState({ name: '', email: '', phone: '', currentPassword: '', newPassword: '', confirmNewPassword: '', height: '', weight: '' });
     const [updateStatus, setUpdateStatus] = useState({ type: '', message: '' });
     const [isUpdating, setIsUpdating] = useState(false);
 
@@ -43,6 +43,7 @@ const Navbar = () => {
         setFormData({
             name: user.name,
             email: user.email,
+            phone: user.phone || '',
             currentPassword: '',
             newPassword: '',
             confirmNewPassword: '',
@@ -74,6 +75,7 @@ const Navbar = () => {
             await updateProfile(
                 formData.name,
                 formData.email,
+                formData.phone,
                 undefined,
                 undefined,
                 formData.height,
@@ -396,6 +398,19 @@ const Navbar = () => {
                                     required
                                     className="w-full px-4 py-2.5 bg-dark-300 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition"
                                 />
+                            </div>
+                            <div>
+                                <label className="block text-gray-300 text-sm font-medium mb-1.5">Phone Number (WhatsApp)</label>
+                                <input
+                                    type="tel"
+                                    name="phone"
+                                    value={formData.phone}
+                                    onChange={handleInputChange}
+                                    required
+                                    pattern="[0-9]{10}"
+                                    className="w-full px-4 py-2.5 bg-dark-300 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition"
+                                />
+                                <p className="text-[10px] text-gray-500 mt-1">10-digit number for gym updates.</p>
                             </div>
 
                             <div className="grid grid-cols-2 gap-4">

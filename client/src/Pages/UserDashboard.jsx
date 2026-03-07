@@ -53,10 +53,10 @@ const UserDashboard = () => {
             setFeedbackStatus({ type: 'success', message: 'Thank you! Your feedback has been submitted successfully.' });
             setFeedbackForm({ rating: 5, feedback: '' });
 
-            // 🕒 Auto-clear message after 5 seconds
+            // 🕒 Auto-clear message after 3 seconds
             setTimeout(() => {
                 setFeedbackStatus({ type: '', message: '' });
-            }, 5000);
+            }, 3000);
 
         } catch (error) {
             setFeedbackStatus({ type: 'error', message: error.response?.data?.message || 'Failed to submit feedback' });
@@ -87,7 +87,7 @@ const UserDashboard = () => {
                             <div key={notif._id} className="bg-purple/10 border border-purple/20 p-4 rounded-xl flex items-center justify-between">
                                 <div className="flex items-center gap-3">
                                     <FaBell className="text-purple" />
-                                    <p className="text-white text-sm">{notif.message}</p>
+                                    <p className="text-white text-base font-bold leading-tight">{notif.message}</p>
                                 </div>
                                 <button
                                     onClick={() => handleMarkAsRead(notif._id)}

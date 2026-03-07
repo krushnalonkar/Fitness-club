@@ -14,6 +14,9 @@ import ManageInquiries from './Pages/ManageInquiries'
 import AdminUserDetails from './Pages/AdminUserDetails'
 import ForgotPassword from './Pages/ForgotPassword'
 import ResetPassword from './Pages/ResetPassword'
+import PrivacyPolicy from './Pages/PrivacyPolicy'
+import TermsOfService from './Pages/TermsOfService'
+import Support from './Pages/Support'
 import Navbar from "./Components/Navbar"
 import Footer from "./Components/Footer"
 import Chatbot from "./Components/Chatbot"
@@ -80,6 +83,11 @@ function App() {
 
         <Route path='/forgot-password' element={<ForgotPassword />} />
         <Route path='/reset-password/:token?' element={<ResetPassword />} />
+
+        {/* Support & Legal Routes */}
+        <Route path='/privacy-policy' element={<PrivacyPolicy />} />
+        <Route path='/terms-of-service' element={<TermsOfService />} />
+        <Route path='/support' element={<Support />} />
       </Routes>
       {!isAdminPath && <Footer />}
       {!isAdminPath && <Chatbot />}

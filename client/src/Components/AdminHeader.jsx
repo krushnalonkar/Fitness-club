@@ -181,7 +181,7 @@ const AdminHeader = () => {
                                                 <div className="flex gap-4">
                                                     <div className="mt-1 text-base">{getIcon(n.type)}</div>
                                                     <div>
-                                                        <p className="text-xs text-white leading-relaxed font-medium">{n.message}</p>
+                                                        <p className="text-sm text-white leading-relaxed font-bold">{n.message}</p>
                                                         <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">
                                                             {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                                         </p>

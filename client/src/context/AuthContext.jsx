@@ -34,9 +34,9 @@ export const AuthProvider = ({ children }) => {
         fetchUser();
     }, [token]);
 
-    const login = async (email, password) => {
+    const login = async (identifier, password) => {
         try {
-            const res = await axios.post('/api/auth/login', { email, password });
+            const res = await axios.post('/api/auth/login', { identifier, password });
             localStorage.setItem('gymToken', res.data.token);
             setToken(res.data.token);
             setUser(res.data);
@@ -46,9 +46,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const register = async (name, email, password, height, weight) => {
+    const register = async (name, email, phone, password, height, weight) => {
         try {
-            const res = await axios.post('/api/auth/register', { name, email, password, height, weight });
+            const res = await axios.post('/api/auth/register', { name, email, phone, password, height, weight });
             return res.data;
         } catch (error) {
             throw error.response?.data?.message || 'Registration failed';

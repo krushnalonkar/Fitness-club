@@ -13,17 +13,23 @@ const generateToken = (id) => {
 // @access  Public
 const registerUser = async (req, res) => {
     try {
-        const { name, email, password, height, weight } = req.body;
+        const { name, email, phone, password, height, weight } = req.body;
 
-        const userExists = await User.findOne({ email });
+        // Check if user exists by email OR phone
+        const userExists = await User.findOne({
+            $or: [{ email }, { phone }]
+        });
 
         if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({
+                message: userExists.email === email ? 'Email already registered' : 'Phone number already registered'
+            });
         }
 
         const user = await User.create({
             name,
             email,
+            phone,
             password,
             progress: (height || weight) ? [{ height, weight }] : []
         });
@@ -31,7 +37,7 @@ const registerUser = async (req, res) => {
         if (user) {
             // Create Admin Notification
             await Notification.create({
-                message: `New Member Joined: ${name}`,
+                message: `New Member Joined: ${name} (${phone})`,
                 type: 'user'
             });
 
@@ -39,6 +45,7 @@ const registerUser = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                phone: user.phone,
                 role: user.role,
                 token: generateToken(user._id),
             });
@@ -55,20 +62,24 @@ const registerUser = async (req, res) => {
 // @access  Public
 const loginUser = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { identifier, password } = req.body; // 'identifier' can be email or phone
 
-        const user = await User.findOne({ email });
+        // Find user by email OR phone
+        const user = await User.findOne({
+            $or: [{ email: identifier }, { phone: identifier }]
+        });
 
         if (user && (await user.matchPassword(password))) {
             res.json({
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                phone: user.phone,
                 role: user.role,
                 token: generateToken(user._id),
             });
         } else {
-            res.status(401).json({ message: 'Invalid email or password' });
+            res.status(401).json({ message: 'Invalid credentials. Check your email/phone or password.' });
         }
     } catch (error) {
         res.status(500).json({ message: error.message });

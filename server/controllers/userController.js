@@ -13,6 +13,7 @@ const getUserDashboard = async (req, res) => {
                 _id: user._id,
                 name: user.name,
                 email: user.email,
+                phone: user.phone,
                 role: user.role,
                 bookedPlans: user.bookedPlans,
                 progress: user.progress,
@@ -63,6 +64,7 @@ const updateUserProfile = async (req, res) => {
         if (user) {
             user.name = req.body.name || user.name;
             user.email = req.body.email || user.email;
+            user.phone = req.body.phone || user.phone;
 
             // Handle height/weight updates
             if (req.body.height || req.body.weight) {
@@ -91,6 +93,7 @@ const updateUserProfile = async (req, res) => {
                 _id: updatedUser._id,
                 name: updatedUser.name,
                 email: updatedUser.email,
+                phone: updatedUser.phone,
                 role: updatedUser.role,
                 bookedPlans: updatedUser.bookedPlans,
                 progress: updatedUser.progress,
@@ -204,16 +207,17 @@ const deleteUser = async (req, res) => {
 // @access  Private/Admin logic
 const createUserByAdmin = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        const { name, email, phone, password, role } = req.body;
 
-        const userExists = await User.findOne({ email });
+        const userExists = await User.findOne({ $or: [{ email }, { phone }] });
         if (userExists) {
-            return res.status(400).json({ message: 'User already exists' });
+            return res.status(400).json({ message: 'User already exists with this email or phone' });
         }
 
         const user = await User.create({
             name,
             email,
+            phone,
             password,
             role: role || 'user'
         });
@@ -239,6 +243,7 @@ const updateUserByAdmin = async (req, res) => {
         if (user) {
             user.name = req.body.name || user.name;
             user.email = req.body.email || user.email;
+            user.phone = req.body.phone || user.phone;
             user.role = req.body.role || user.role;
 
             const updatedUser = await user.save();
@@ -247,6 +252,7 @@ const updateUserByAdmin = async (req, res) => {
                 _id: updatedUser._id,
                 name: updatedUser.name,
                 email: updatedUser.email,
+                phone: updatedUser.phone,
                 role: updatedUser.role,
             });
         } else {

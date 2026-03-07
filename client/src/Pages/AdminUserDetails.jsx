@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import {
     FaArrowLeft, FaUserCircle, FaEnvelope, FaCalendarAlt,
     FaDumbbell, FaChartLine, FaHistory, FaWeight, FaRulerVertical,
-    FaCheckCircle, FaClock
+    FaCheckCircle, FaClock, FaPhoneAlt, FaWhatsapp
 } from 'react-icons/fa';
 import AdminSidebar from '../Components/AdminSidebar';
 import AdminHeader from '../Components/AdminHeader';
@@ -219,6 +219,9 @@ const AdminUserDetails = () => {
                                         <FaEnvelope className="text-purple" /> {user.email}
                                     </div>
                                     <div className="flex items-center gap-2 text-gray-400 text-sm">
+                                        <FaPhoneAlt className="text-purple" /> {user.phone}
+                                    </div>
+                                    <div className="flex items-center gap-2 text-gray-400 text-sm">
                                         <FaCalendarAlt className="text-purple" /> Joined {new Date(user.createdAt).toLocaleDateString()}
                                     </div>
                                     <span className={`px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest ${user.role === 'admin' ? 'bg-red-500/10 text-red-500 border border-red-500/20' : 'bg-green-500/10 text-green-500 border border-green-500/20'}`}>
@@ -230,6 +233,16 @@ const AdminUserDetails = () => {
                                         </div>
                                     )}
                                 </div>
+                            </div>
+                            <div className="mt-4 md:mt-0 flex gap-3">
+                                <a
+                                    href={`https://wa.me/91${user.phone}?text=Hello ${user.name}, this is from Gym Portal regarding your fitness updates...`}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    className="flex items-center gap-2 bg-[#25D366] hover:bg-[#20ba59] text-white px-6 py-3 rounded-2xl font-bold text-xs uppercase tracking-widest transition shadow-lg shadow-green-500/20"
+                                >
+                                    <FaWhatsapp size={18} /> Message on WhatsApp
+                                </a>
                             </div>
                         </div>
                     </motion.div>

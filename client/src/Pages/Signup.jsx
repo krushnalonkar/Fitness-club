@@ -9,6 +9,7 @@ const Signup = () => {
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        phone: '',
         password: '',
         confirmPassword: '',
         height: '',
@@ -40,6 +41,7 @@ const Signup = () => {
             await register(
                 formData.name,
                 formData.email,
+                formData.phone,
                 formData.password,
                 formData.height,
                 formData.weight
@@ -107,6 +109,20 @@ const Signup = () => {
                             placeholder="email@example.com"
                             className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition"
                         />
+                    </div>
+                    <div>
+                        <label className="block text-gray-300 text-sm font-medium mb-1.5">Phone Number (WhatsApp)</label>
+                        <input
+                            type="tel"
+                            name="phone"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            required
+                            pattern="[0-9]{10}"
+                            placeholder="9876543210"
+                            className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition"
+                        />
+                        <p className="text-[10px] text-gray-500 mt-1 ml-1">Must be 10 digits without spaces or country code.</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
