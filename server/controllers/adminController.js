@@ -178,11 +178,27 @@ const assignSessionByAdmin = async (req, res) => {
     }
 };
 
+const toggleAdminRole = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (user) {
+            user.role = user.role === 'admin' ? 'user' : 'admin';
+            await user.save();
+            res.json({ message: `User role updated to ${user.role}`, role: user.role });
+        } else {
+            res.status(404).json({ message: 'User not found' });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAdminStats,
     adminLogin,
     getUserDetailsByAdmin,
     updateUserProgressByAdmin,
     assignWorkoutByAdmin,
-    assignSessionByAdmin
+    assignSessionByAdmin,
+    toggleAdminRole
 };

@@ -8,7 +8,8 @@ const {
     getUserDetailsByAdmin,
     updateUserProgressByAdmin,
     assignWorkoutByAdmin,
-    assignSessionByAdmin
+    assignSessionByAdmin,
+    toggleAdminRole
 } = require('../controllers/adminController');
 const { deleteUserPlan, cancelUserPlan } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
@@ -24,6 +25,7 @@ router.post('/member-actions/:id/session', protect, assignSessionByAdmin);
 // Membership Management (Admin Only)
 router.put('/member-actions/:id/plans/:planId/cancel', protect, cancelUserPlan);
 router.delete('/member-actions/:id/plans/:planId', protect, deleteUserPlan);
+router.put('/member-actions/:id/toggle-admin', protect, toggleAdminRole);
 
 // Public route for admin login
 router.post('/login', adminLogin);

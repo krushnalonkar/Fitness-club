@@ -26,33 +26,32 @@ app.use('/api/contacts', require('./routes/contactRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
 
-// Local MongoDB Connection
-const mongoURI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/GymPortal";
+// Database Connection
+const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI)
-  .then(() => console.log("Local MongoDB Connected ✅"))
+  .then(() => console.log("MongoDB Connected (Cloud/Live) ✅"))
   .catch((err) => {
     console.error("MongoDB Connection Error ❌");
     console.error(err);
   });
 
 app.get("/", (req, res) => {
-  res.send("API is running locally... 🚀");
+  res.send("Gym Portal API is running... 🚀");
 });
 
 // Diagnostic Ping for Frontend Proxy Test
 app.get("/api/ping", (req, res) => res.json({ message: "BACKEND-OK", time: new Date() }));
 
-// 🛡️ Global 404 JSON Handler (CRITICAL for debugging)
+// 🛡️ Global 404 JSON Handler
 app.use((req, res) => {
   console.warn(`[404-NOT-FOUND] ${req.method} ${req.url}`);
   res.status(404).json({
-    message: `The endpoint ${req.method} ${req.url} does not exist on this server. Check your routes!`,
-    suggestion: "If this route SHOULD exist, restart your backend server."
+    message: `The endpoint ${req.method} ${req.url} does not exist on this server.`,
   });
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, '0.0.0.0', () => {
-  console.log(`🚀 [SERVER-LATEST-STABLE] Running on port ${PORT} 🔥`);
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT} 🔥`);
 });

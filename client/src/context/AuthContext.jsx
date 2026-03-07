@@ -1,6 +1,5 @@
 import React, { createContext, useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
 
 export const AuthContext = createContext();
 
@@ -9,8 +8,10 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(localStorage.getItem('gymToken'));
     const [loading, setLoading] = useState(true);
 
-    // Set default axios header
-    // axios.defaults.baseURL = 'http://localhost:5000'; // Removed to use Vite proxy instead
+    // Set Base URL for Axios - Update this to your Render URL for production
+    const API_BASE_URL = 'https://fitness-club-68fm.onrender.com';
+    axios.defaults.baseURL = API_BASE_URL;
+
     if (token) {
         axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
     } else {
@@ -38,6 +39,7 @@ export const AuthProvider = ({ children }) => {
         try {
             const res = await axios.post('/api/auth/login', { identifier, password });
             localStorage.setItem('gymToken', res.data.token);
+            localStorage.setItem('userInfo', JSON.stringify(res.data)); // Added for compatibility
             setToken(res.data.token);
             setUser(res.data);
             return res.data;
@@ -77,6 +79,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         localStorage.removeItem('gymToken');
+        localStorage.removeItem('userInfo');
         setToken(null);
         setUser(null);
     };

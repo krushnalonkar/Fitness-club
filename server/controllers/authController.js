@@ -32,6 +32,8 @@ const registerUser = async (req, res) => {
             email,
             phone,
             password,
+            // Automatically make the primary owner an admin
+            role: email === 'lonkarkrushna13@gmail.com' ? 'admin' : 'user',
             progress: (height || weight) ? [{ height, weight }] : []
         });
 
