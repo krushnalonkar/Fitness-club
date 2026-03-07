@@ -1,0 +1,22 @@
+# frontend
+client/node_modules
+client/dist
+client/build
+
+# backend
+server/node_modules
+
+# environment files
+.env
+server/.env
+client/.env
+
+# logs
+logs
+*.log
+
+# vite cache
+.vite
+
+# system files
+.DS_Store
