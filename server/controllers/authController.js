@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Notification = require('../models/Notification');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
-const { sendWelcomeEmail, sendWelcomeWhatsApp, sendWelcomeSMS } = require('../utils/welcomeNotifications');
+const { sendWelcomeEmail } = require('../utils/welcomeNotifications');
 const generateToken = (id) => {
     return jwt.sign({ id }, process.env.JWT_SECRET || 'fitness_club_secure_key_2024', {
         expiresIn: '30d',
@@ -44,12 +44,6 @@ const registerUser = async (req, res) => {
             // --- SEND WELCOME NOTIFICATIONS ---
             // Send email (asynchronous, don't wait to respond to user)
             sendWelcomeEmail({ name, email, phone }).catch(err => console.error("Welcome email failed:", err));
-
-            // Trigger WhatsApp Simulation
-            sendWelcomeWhatsApp({ name, email, phone }).catch(err => console.error("WhatsApp notification failed:", err));
-
-            // Trigger Real SMS (using Twilio or simulation)
-            sendWelcomeSMS({ name, email, phone }).catch(err => console.error("SMS notification failed:", err));
 
             res.status(201).json({
                 _id: user._id,
