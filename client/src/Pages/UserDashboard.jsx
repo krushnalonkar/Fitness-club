@@ -52,6 +52,12 @@ const UserDashboard = () => {
             await axios.post('/api/testimonials', feedbackForm);
             setFeedbackStatus({ type: 'success', message: 'Thank you! Your feedback has been submitted successfully.' });
             setFeedbackForm({ rating: 5, feedback: '' });
+
+            // 🕒 Auto-clear message after 5 seconds
+            setTimeout(() => {
+                setFeedbackStatus({ type: '', message: '' });
+            }, 5000);
+
         } catch (error) {
             setFeedbackStatus({ type: 'error', message: error.response?.data?.message || 'Failed to submit feedback' });
         } finally {
