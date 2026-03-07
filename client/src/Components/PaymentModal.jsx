@@ -1,241 +1,351 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { FaCreditCard, FaMobileAlt, FaUniversity, FaCheckCircle, FaTimes, FaLock, FaSpinner, FaChevronRight, FaRegCheckCircle, FaQrcode } from 'react-icons/fa';
+import { FaCreditCard, FaMobileAlt, FaUniversity, FaCheckCircle, FaTimes, FaLock, FaSpinner, FaChevronRight, FaRegCheckCircle, FaQrcode, FaArrowLeft, FaShieldAlt } from 'react-icons/fa';
 import { SiGooglepay, SiPhonepe, SiPaytm, SiVisa, SiMastercard } from 'react-icons/si';
 import axios from 'axios';
 import { AuthContext } from '../context/AuthContext';
 
 const PaymentModal = ({ isOpen, onClose, plan, onPaymentSuccess }) => {
     const { user } = useContext(AuthContext);
-    const [step, setStep] = useState('method'); // method, processing, success
+    const [step, setStep] = useState('method'); // method, card-details, upi-selection, upi-id, upi-qr, netbanking, processing, success
     const [selectedMethod, setSelectedMethod] = useState(null);
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
+
+    // Form States
+    const [cardData, setCardData] = useState({ number: '', name: '', expiry: '', cvv: '' });
+    const [upiId, setUpiId] = useState('');
+    const [selectedBank, setSelectedBank] = useState(null);
 
     useEffect(() => {
         if (!isOpen) {
             setStep('method');
             setSelectedMethod(null);
             setLoading(false);
-            setError('');
+            setErrorMessage('');
+            setCardData({ number: '', name: '', expiry: '', cvv: '' });
+            setUpiId('');
+            setSelectedBank(null);
         }
     }, [isOpen]);
 
-    const handleRazorpayPayment = async () => {
+    const handleBack = () => {
+        if (step === 'card-details' || step === 'upi-selection' || step === 'netbanking') {
+            setStep('method');
+        } else if (step === 'upi-id' || step === 'upi-qr') {
+            setStep('upi-selection');
+        } else if (step === 'netbanking-login') {
+            setStep('netbanking');
+        }
+    };
+
+    const handleMethodSelect = (methodId) => {
+        setSelectedMethod(methodId);
+        if (methodId === 'card') {
+            setStep('card-details');
+        } else if (methodId === 'upi') {
+            setStep('upi-selection');
+        } else if (methodId === 'netbanking') {
+            setStep('netbanking');
+        }
+    };
+
+    const handleFinalSimulation = async () => {
+        setStep('processing');
+        setLoading(true);
         try {
-            setLoading(true);
-            setError('');
-
-            // 1. Create Order on Backend
-            const amountStr = plan?.price.replace(/[^0-9]/g, '');
-            const amount = parseInt(amountStr);
-
-            const { data } = await axios.post('/api/payments/create-order', {
-                amount,
-                planId: plan?._id
-            });
-
-            const options = {
-                key: 'rzp_test_6pG8AasXwVn53F', // This should match backend or come from config
-                amount: data.amount,
-                currency: 'INR',
-                name: 'Antigravity Gym',
-                description: `Payment for ${plan?.name} Membership`,
-                image: '/logo.png', // Add your logo path
-                order_id: data.orderId,
-                handler: async function (response) {
-                    // This is called after successful payment at Razorpay
-                    setStep('processing');
-                    try {
-                        const verifyRes = await axios.post('/api/payments/verify', {
-                            razorpay_order_id: response.razorpay_order_id,
-                            razorpay_payment_id: response.razorpay_payment_id,
-                            razorpay_signature: response.razorpay_signature,
-                            planDetails: plan,
-                            userId: user?._id
-                        });
-
-                        if (verifyRes.data.success) {
-                            setStep('success');
-                            setTimeout(() => {
-                                onPaymentSuccess();
-                                onClose();
-                            }, 3000);
-                        }
-                    } catch (err) {
-                        setError('Payment verification failed. Please contact support.');
-                        setStep('method');
-                    }
-                },
-                prefill: {
-                    name: user?.name,
-                    email: user?.email,
-                    contact: '9999999999' // Optional
-                },
-                notes: {
-                    address: 'Gym Portal Office'
-                },
-                theme: {
-                    color: '#8b5cf6' // Purple theme
-                }
-            };
-
-            const rzp = new window.Razorpay(options);
-            rzp.on('payment.failed', function (response) {
-                setError(response.error.description);
-                setLoading(false);
-            });
-            rzp.open();
-            setLoading(false);
-
+            await new Promise(resolve => setTimeout(resolve, 3000));
+            setStep('success');
+            setTimeout(() => {
+                onPaymentSuccess();
+                onClose();
+            }, 3500);
         } catch (err) {
-            setError(err.response?.data?.message || 'Failed to initiate payment');
+            setErrorMessage('Payment failed. Please try again.');
+            setStep('method');
+        } finally {
             setLoading(false);
         }
     };
 
+    const handleCardInput = (e) => {
+        const { name, value } = e.target;
+
+        // Strictly allow only numbers for sensitive fields
+        let numericValue = value;
+        if (name === 'number' || name === 'cvv' || name === 'expiry') {
+            numericValue = value.replace(/\D/g, ''); // Remove all non-digit characters
+        }
+
+        let formattedValue = numericValue;
+        if (name === 'number') {
+            formattedValue = numericValue.replace(/(\d{4})/g, '$1 ').trim().substring(0, 19);
+        } else if (name === 'expiry') {
+            formattedValue = numericValue.replace(/(\d{2})/g, '$1/').trim().substring(0, 5);
+            if (formattedValue.endsWith('/')) formattedValue = formattedValue.slice(0, -1);
+        } else if (name === 'cvv') {
+            formattedValue = numericValue.substring(0, 3);
+        }
+        setCardData(prev => ({ ...prev, [name]: formattedValue }));
+    };
+
+    const [bankLogin, setBankLogin] = useState({ username: '', password: '' });
+
     if (!isOpen) return null;
 
     const paymentMethods = [
-        { id: 'upi', name: 'UPI Apps', icon: <FaMobileAlt className="text-purple" />, desc: 'GPay, PhonePe, Paytm' },
-        { id: 'card', name: 'Debit/Credit Card', icon: <FaCreditCard className="text-purple" />, desc: 'Visa, Mastercard, RuPay' },
-        { id: 'netbanking', name: 'Net Banking', icon: <FaUniversity className="text-purple" />, desc: 'All Indian Banks' },
+        { id: 'upi', name: 'UPI (QR or ID)', icon: <FaQrcode />, desc: 'GPay, PhonePe, Paytm' },
+        { id: 'card', name: 'Card Payment', icon: <FaCreditCard />, desc: 'Visa, Mastercard' },
+        { id: 'netbanking', name: 'Net Banking', icon: <FaUniversity />, desc: 'Choose from Popular Banks' },
     ];
 
-    return (
-        <AnimatePresence>
-            <div className="fixed inset-0 z-[100] flex items-center justify-center px-4">
-                <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    onClick={onClose}
-                    className="absolute inset-0 bg-black/85 backdrop-blur-sm"
-                />
+    const popularBanks = [
+        { id: 'sbi', name: 'SBI', logo: '/banks/sbi.svg' },
+        { id: 'hdfc', name: 'HDFC', logo: '/banks/hdfc.svg' },
+        { id: 'icici', name: 'ICICI', logo: '/banks/icici.svg' },
+        { id: 'axis', name: 'Axis', logo: '/banks/axis.svg' },
+        { id: 'kotak', name: 'Kotak', logo: '/banks/kotak.svg' },
+        { id: 'yes', name: 'Yes Bank', logo: '/banks/yes.svg' },
+    ];
 
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.95, y: 10 }}
-                    animate={{ opacity: 1, scale: 1, y: 0 }}
-                    exit={{ opacity: 0, scale: 0.95, y: 10 }}
-                    className="relative w-full max-w-[420px] bg-[#0c0c0e] border border-white/10 rounded-[32px] overflow-hidden shadow-2xl z-10"
-                >
+    const validateUpi = (id) => {
+        return /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/.test(id);
+    };
+
+    const isCardValid = () => {
+        const { number, expiry, cvv, name } = cardData;
+        return number.replace(/\s/g, '').length === 16 &&
+            /^\d{2}\/\d{2}$/.test(expiry) &&
+            cvv.length === 3 &&
+            name.trim().length > 2;
+    };
+
+    const handleBankSelection = (bank) => {
+        setSelectedBank(bank);
+        setStep('netbanking-login');
+    };
+
+    const handleCancel = () => {
+        if (window.confirm("Are you sure you want to cancel this payment?")) {
+            onClose();
+        }
+    };
+
+    return (
+        <AnimatePresence mode="wait">
+            <div className="fixed inset-0 z-[200] flex items-center justify-center px-4 overflow-hidden">
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={onClose} className="absolute inset-0 bg-slate-900/30 backdrop-blur-[2px] cursor-pointer" />
+                <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0, scale: 0.95 }} className="relative w-full max-w-[460px] bg-white rounded-2xl overflow-hidden shadow-2xl z-10 border border-slate-200" >
                     {/* Header */}
-                    <div className="px-6 py-5 border-b border-white/5 flex justify-between items-center bg-[#111114]">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-lg font-black text-white italic tracking-tighter uppercase font-sans">Razorpay Gateway</h3>
-                            <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <div className="px-8 py-6 border-b border-slate-100 flex flex-col items-center gap-4 bg-slate-50/50">
+                        <div className="w-full flex justify-between items-center">
+                            {step !== 'method' && step !== 'processing' && step !== 'success' && (
+                                <button onClick={handleBack} className="text-slate-500 hover:text-blue-600 transition cursor-pointer"><FaArrowLeft size={18} /></button>
+                            )}
+                            <div className="flex-1 flex justify-center"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" alt="PayPal" className="h-6" /></div>
+                            <button onClick={onClose} className="text-slate-300 hover:text-slate-600 transition cursor-pointer"><FaTimes size={18} /></button>
                         </div>
-                        <button onClick={onClose} className="text-gray-500 hover:text-white transition p-2 bg-white/5 rounded-xl">
-                            <FaTimes size={16} />
-                        </button>
+                        {step !== 'success' && step !== 'processing' && (
+                            <div className="w-full flex justify-between items-center px-2">
+                                <div className="text-left"><p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Pay to</p><h3 className="text-sm font-bold text-slate-800">Antigravity Fitness</h3></div>
+                                <div className="text-right"><p className="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Total</p><h3 className="text-xl font-bold text-slate-900">{plan?.price}</h3></div>
+                            </div>
+                        )}
                     </div>
 
-                    <div className="p-7 min-h-[380px] flex flex-col">
+                    <div className="p-8">
                         {step === 'method' && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col">
-                                <div className="bg-gradient-to-br from-purple/20 to-pink-500/5 p-5 rounded-3xl border border-white/5 mb-8 flex justify-between items-center group">
-                                    <div className="relative z-10">
-                                        <p className="text-[10px] text-purple-400 font-black uppercase tracking-[0.2em] mb-1 leading-none">Checkout Value</p>
-                                        <h2 className="text-2xl font-black text-white italic tracking-tighter">{plan?.price}</h2>
-                                    </div>
-                                    <div className="text-right leading-tight relative z-10">
-                                        <p className="text-white font-black text-sm uppercase italic">{plan?.name}</p>
-                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">{plan?.duration}</p>
-                                    </div>
-                                </div>
-
-                                <div className="space-y-3 flex-1">
-                                    {paymentMethods.map((method) => (
-                                        <div
-                                            key={method.id}
-                                            className="w-full flex items-center justify-between p-4 bg-white/5 border border-white/5 rounded-2xl opacity-60 hover:opacity-100 transition cursor-default"
-                                        >
-                                            <div className="flex items-center gap-4">
-                                                <div className="w-10 h-10 bg-dark-400 rounded-xl flex items-center justify-center text-xl">
-                                                    {method.icon}
-                                                </div>
-                                                <div className="text-left">
-                                                    <p className="text-white font-black text-sm tracking-tight">{method.name}</p>
-                                                    <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest leading-none mt-1">{method.desc}</p>
-                                                </div>
-                                            </div>
-                                            <FaRegCheckCircle className="text-gray-700" />
-                                        </div>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                                <h4 className="text-center text-slate-800 font-medium text-lg">Choose a payment method</h4>
+                                <div className="space-y-3">
+                                    {paymentMethods.map(m => (
+                                        <button key={m.id} onClick={() => handleMethodSelect(m.id)} className="w-full flex items-center gap-4 p-5 border border-slate-200 hover:border-blue-500 hover:bg-blue-50/30 rounded-xl transition-all group text-left shadow-sm cursor-pointer">
+                                            <div className="text-2xl text-slate-400 group-hover:text-blue-600">{m.icon}</div>
+                                            <div className="flex-1 text-sm"><p className="text-slate-900 font-bold">{m.name}</p><p className="text-slate-500 text-[11px] font-medium leading-tight mt-0.5">{m.desc}</p></div>
+                                            <FaChevronRight className="text-slate-300 group-hover:text-blue-500" size={12} />
+                                        </button>
                                     ))}
                                 </div>
+                            </motion.div>
+                        )}
 
-                                {error && (
-                                    <div className="text-red-500 text-[9px] font-black uppercase tracking-widest bg-red-500/10 p-3 rounded-xl text-center mb-4 border border-red-500/20">
-                                        ⚠️ {error}
+                        {step === 'upi-selection' && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                                <h4 className="text-center text-slate-800 font-medium text-lg">Select UPI Method</h4>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button onClick={() => setStep('upi-qr')} className="flex flex-col items-center gap-3 p-6 border border-slate-200 rounded-xl hover:bg-blue-50/30 transition-all cursor-pointer">
+                                        <FaQrcode size={32} className="text-blue-500" />
+                                        <span className="text-sm font-bold text-slate-700">Scan QR</span>
+                                    </button>
+                                    <button onClick={() => setStep('upi-id')} className="flex flex-col items-center gap-3 p-6 border border-slate-200 rounded-xl hover:bg-blue-50/30 transition-all cursor-pointer">
+                                        <FaMobileAlt size={32} className="text-blue-500" />
+                                        <span className="text-sm font-bold text-slate-700">UPI ID / Number</span>
+                                    </button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 'upi-id' && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                                <div className="space-y-4">
+                                    <label className="text-sm font-bold text-slate-700">Enter UPI ID or Mobile Number</label>
+                                    <input
+                                        type="text"
+                                        placeholder="e.g. 9876543210@ybl"
+                                        value={upiId}
+                                        onChange={(e) => setUpiId(e.target.value)}
+                                        className={`w-full h-14 border rounded-lg px-4 text-slate-800 font-medium outline-none transition-all ${upiId && !validateUpi(upiId) ? 'border-red-400 bg-red-50' : 'border-slate-300 focus:border-blue-500'}`}
+                                    />
+                                    <p className={`text-[10px] ${upiId && !validateUpi(upiId) ? 'text-red-500' : 'text-slate-400'}`}>
+                                        {upiId && !validateUpi(upiId) ? 'Please enter a valid UPI ID (e.g. name@bank)' : 'A payment request will be sent to your UPI app.'}
+                                    </p>
+                                </div>
+                                <div className="space-y-3">
+                                    <button
+                                        disabled={!validateUpi(upiId)}
+                                        onClick={handleFinalSimulation}
+                                        className="w-full h-14 bg-[#0070ba] hover:bg-[#003087] text-white font-bold rounded-full disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition-all cursor-pointer"
+                                    >
+                                        Verify & Pay
+                                    </button>
+                                    <button onClick={handleCancel} className="w-full py-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest transition-all cursor-pointer text-center">Cancel Payment</button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 'upi-qr' && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center space-y-8">
+                                <div className="p-3 border-2 border-slate-100 rounded-2xl bg-white shadow-lg">
+                                    <img src="/qr-code.png" className="w-48 h-48" onError={(e) => { e.target.src = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=simulate@bank&am=" + plan?.price.replace(/[^0-9]/g, ''); }} />
+                                </div>
+                                <div className="w-full space-y-3">
+                                    <button onClick={handleFinalSimulation} className="w-full h-14 bg-[#ffc439] text-[#1e293b] font-bold rounded-full shadow-md hover:bg-[#f2ba36] transition-all cursor-pointer">Verify Payment After Scan</button>
+                                    <button onClick={handleCancel} className="w-full py-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest transition-all text-center cursor-pointer">Cancel Payment</button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 'netbanking' && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                                <h4 className="text-center text-slate-800 font-medium text-md">Select your Bank</h4>
+                                <div className="grid grid-cols-3 gap-3">
+                                    {popularBanks.map(b => (
+                                        <button key={b.id} onClick={() => handleBankSelection(b)} className="flex flex-col items-center justify-center gap-2 p-3 border border-slate-100 rounded-xl hover:bg-blue-50 hover:border-blue-300 transition-all group min-h-[80px] cursor-pointer">
+                                            <div className="h-8 flex items-center justify-center w-full">
+                                                <img
+                                                    src={b.logo}
+                                                    alt={b.name}
+                                                    className="max-h-full max-w-[80%] object-contain"
+                                                    onError={(e) => { e.target.style.display = 'none'; e.target.parentElement.innerHTML = "🏦"; }}
+                                                />
+                                            </div>
+                                            <span className="text-[10px] font-bold text-slate-600 uppercase tracking-tighter">{b.name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                                <div className="space-y-4">
+                                    <select onChange={(e) => { if (e.target.value) { handleBankSelection({ name: e.target.value }); } }} className="w-full h-12 border border-slate-200 rounded-lg px-4 text-xs font-medium text-slate-500 cursor-pointer">
+                                        <option value="">Choose another bank...</option>
+                                        <option value="pnb">Punjab National Bank</option>
+                                        <option value="boi">Bank of India</option>
+                                        <option value="canara">Canara Bank</option>
+                                    </select>
+                                    <button onClick={handleCancel} className="w-full py-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest transition-all text-center cursor-pointer">Cancel Payment</button>
+                                </div>
+                            </motion.div>
+                        )}
+
+                        {step === 'netbanking-login' && (
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+                                <div className="flex items-center gap-3 p-4 bg-slate-50 border border-slate-100 rounded-xl">
+                                    <div className="w-10 h-10 flex items-center justify-center bg-white rounded-lg shadow-sm overflow-hidden text-blue-600">
+                                        {selectedBank?.logo ? <img src={selectedBank.logo} className="w-8 h-8 object-contain" /> : <FaUniversity size={24} />}
                                     </div>
-                                )}
+                                    <div className="text-sm font-bold text-slate-700">{selectedBank?.name} Net Banking</div>
+                                </div>
+                                <div className="space-y-4">
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Account Number / User ID</label>
+                                        <input
+                                            type="text"
+                                            value={bankLogin.username}
+                                            onChange={(e) => setBankLogin(prev => ({ ...prev, username: e.target.value }))}
+                                            className="w-full h-12 border border-slate-300 rounded-lg px-4 text-slate-800 outline-none focus:border-blue-500 transition-all font-medium"
+                                            placeholder="Enter your banking ID"
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">PIN / Transaction Password</label>
+                                        <input
+                                            type="password"
+                                            value={bankLogin.password}
+                                            onChange={(e) => setBankLogin(prev => ({ ...prev, password: e.target.value }))}
+                                            className="w-full h-12 border border-slate-300 rounded-lg px-4 text-slate-800 outline-none focus:border-blue-500 transition-all placeholder:tracking-widest"
+                                            placeholder="••••••••"
+                                        />
+                                    </div>
+                                </div>
+                                <div className="space-y-3">
+                                    <button
+                                        disabled={!bankLogin.username || !bankLogin.password}
+                                        onClick={handleFinalSimulation}
+                                        className="w-full h-14 bg-[#0070ba] text-white font-bold rounded-full hover:bg-[#003087] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition-all cursor-pointer"
+                                    >
+                                        Proceed to Pay {plan?.price}
+                                    </button>
+                                    <button onClick={handleCancel} className="w-full py-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest transition-all text-center cursor-pointer">Cancel Payment</button>
+                                </div>
+                            </motion.div>
+                        )}
 
-                                <button
-                                    onClick={handleRazorpayPayment}
-                                    disabled={loading}
-                                    className="w-full py-5 bg-purple hover:bg-purple-600 text-white font-black rounded-2xl transition-all shadow-xl shadow-purple/30 text-xs uppercase tracking-[0.2em] italic flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
-                                >
-                                    {loading ? (
-                                        <FaSpinner className="animate-spin" />
-                                    ) : (
-                                        <>
-                                            Secure Pay {plan?.price}
-                                            <FaChevronRight size={12} />
-                                        </>
-                                    )}
-                                </button>
-                                <p className="text-center text-[9px] text-gray-600 mt-4 font-bold uppercase tracking-widest">Powered by Razorpay Fintech</p>
+                        {step === 'card-details' && (
+                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
+                                <div className="space-y-4">
+                                    <div className="relative">
+                                        <input type="text" name="number" placeholder="Card Number" value={cardData.number} onChange={handleCardInput} className="w-full h-14 border border-slate-300 rounded-lg px-4 text-slate-800 font-medium outline-none focus:border-blue-500" />
+                                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
+                                            <SiVisa className={cardData.number.startsWith('4') ? 'text-blue-600' : 'text-slate-200'} size={24} />
+                                            <SiMastercard className={cardData.number.startsWith('5') ? 'text-orange-500' : 'text-slate-200'} size={24} />
+                                        </div>
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <input type="text" name="expiry" placeholder="MM/YY" value={cardData.expiry} onChange={handleCardInput} className="w-full h-14 border border-slate-300 rounded-lg px-4 text-slate-800 focus:border-blue-500" />
+                                        <input type="password" name="cvv" placeholder="CVV" value={cardData.cvv} onChange={handleCardInput} className="w-full h-14 border border-slate-300 rounded-lg px-4 text-slate-800 focus:border-blue-500" />
+                                    </div>
+                                    <input type="text" name="name" placeholder="Full Name" value={cardData.name} onChange={handleCardInput} className="w-full h-14 border border-slate-300 rounded-lg px-4 text-slate-800 uppercase focus:border-blue-500" />
+                                </div>
+                                <div className="space-y-3">
+                                    <button
+                                        disabled={!isCardValid()}
+                                        onClick={handleFinalSimulation}
+                                        className="w-full h-14 bg-[#0070ba] text-white font-bold rounded-full hover:bg-[#003087] disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed transition-all cursor-pointer"
+                                    >
+                                        Pay {plan?.price} Now
+                                    </button>
+                                    <button onClick={handleCancel} className="w-full py-2 text-slate-400 hover:text-slate-600 text-xs font-bold uppercase tracking-widest transition-all text-center cursor-pointer">Cancel Payment</button>
+                                </div>
                             </motion.div>
                         )}
 
                         {step === 'processing' && (
-                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex-1 flex flex-col items-center justify-center space-y-8">
-                                <div className="relative">
-                                    <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }} className="w-20 h-20 border-[6px] border-purple border-t-white rounded-full shadow-[0_0_20px_rgba(139,92,246,0.3)]" />
-                                    <FaLock className="absolute inset-0 m-auto text-purple/40" size={24} />
-                                </div>
-                                <div className="text-center">
-                                    <h4 className="text-lg font-black text-white italic uppercase tracking-tighter">Verifying Payment</h4>
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2 max-w-[200px] leading-relaxed">Securing your membership details...</p>
-                                </div>
+                            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col items-center justify-center space-y-6 min-h-[300px]">
+                                <div className="w-16 h-16 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin" />
+                                <div className="text-center"><h4 className="text-slate-800 font-bold text-lg mb-1">Verifying...</h4><p className="text-slate-500 text-sm">Securing your transaction</p></div>
                             </motion.div>
                         )}
 
                         {step === 'success' && (
-                            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex-1 flex flex-col items-center justify-center space-y-8 text-center">
-                                <div className="w-24 h-24 bg-green-500 text-dark-100 rounded-full flex items-center justify-center shadow-[0_0_40px_rgba(34,197,94,0.3)] border-[8px] border-green-400/20">
-                                    <FaCheckCircle size={48} />
-                                </div>
-                                <div className="space-y-2">
-                                    <h4 className="text-3xl font-black text-white italic uppercase tracking-tighter">Success!</h4>
-                                    <p className="text-gray-500 text-[10px] font-black uppercase tracking-[0.2em] mt-1">Plan Activated: {plan?.name}</p>
-                                </div>
-                                <div className="w-full bg-white/[0.03] p-5 rounded-3xl border border-white/5 space-y-3">
-                                    <div className="flex justify-between items-center text-[9px] font-black uppercase tracking-widest text-gray-600">
-                                        <span>Invoice Ref.</span>
-                                        <span className="text-gray-300 font-mono italic">#FIT-990{Math.floor(Math.random() * 100)}</span>
-                                    </div>
-                                    <div className="pt-4 border-t border-white/5 flex justify-between items-center leading-none">
-                                        <p className="text-[11px] text-green-500 font-black uppercase tracking-[0.3em] italic">Full Paid</p>
-                                        <p className="text-white font-black text-2xl italic tracking-tighter">{plan?.price}</p>
-                                    </div>
+                            <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="flex flex-col items-center justify-center space-y-6 text-center min-h-[350px]">
+                                <FaCheckCircle size={56} className="text-emerald-500" />
+                                <div className="space-y-1"><h4 className="text-2xl font-bold text-slate-900">Success!</h4><p className="text-slate-500 text-sm">Membership activated for {plan?.name}</p></div>
+                                <div className="w-full bg-slate-50 p-6 rounded-2xl border border-slate-100">
+                                    <div className="flex justify-between text-xs text-slate-400 mb-4"><span>Order ID</span><span className="text-slate-700 font-mono italic">PP-#{Math.random().toString(36).substring(7).toUpperCase()}</span></div>
+                                    <div className="flex justify-between items-center"><p className="text-2xl font-bold text-blue-900">{plan?.price}</p><img src="https://upload.wikimedia.org/wikipedia/commons/b/b5/PayPal.svg" className="h-4" /></div>
                                 </div>
                             </motion.div>
                         )}
                     </div>
-
-                    {/* Footer Branding */}
-                    <div className="p-6 bg-white/[0.02] border-t border-white/5 flex items-center justify-between opacity-40 hover:opacity-100 transition-all duration-700 grayscale hover:grayscale-0">
-                        <div className="flex items-center gap-6">
-                            <SiVisa size={28} className="text-white" />
-                            <SiMastercard size={28} className="text-white" />
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/UPI-Logo.png/640px-UPI-Logo.png" alt="UPI" className="h-3.5 invert" />
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <FaRegCheckCircle className="text-green-500 text-xs" />
-                            <span className="text-[9px] text-gray-500 font-black uppercase tracking-widest leading-none">PCI-DSS Secured</span>
-                        </div>
-                    </div>
+                    <div className="px-8 py-4 bg-slate-50 border-t border-slate-100 flex items-center justify-center gap-2"><FaLock className="text-slate-300" size={14} /><span className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Secured by PayPal Technology</span></div>
                 </motion.div>
             </div>
         </AnimatePresence>
