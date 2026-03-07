@@ -1,5 +1,6 @@
 const Testimonial = require('../models/Testimonial');
 const User = require('../models/User');
+const Notification = require('../models/Notification');
 
 // @desc    Add a testimonial
 // @route   POST /api/testimonials
@@ -36,6 +37,20 @@ const addTestimonial = async (req, res) => {
         });
 
         const createdTestimonial = await testimonial.save();
+
+        // 🔔 NEW: Notify Admins about new feedback
+        try {
+            await Notification.create({
+                message: `New Review: ${user.name} gave ${rating} stars!`,
+                type: 'inquiry', // Matches AdminHeader icon for feedback
+                refId: createdTestimonial._id
+                // Note: No user field = Global/Admin notification
+            });
+            console.log(`[Notification Success] Created alert for feedback from ${user.name}`);
+        } catch (notifErr) {
+            console.error("[Notification Error] Failed to create feedback alert:", notifErr.message);
+        }
+
         res.status(201).json(createdTestimonial);
 
     } catch (error) {

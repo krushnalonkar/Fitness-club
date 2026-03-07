@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaUserCircle, FaDumbbell, FaChartLine, FaExclamationTriangle, FaBell, FaCheckCircle, FaClock } from 'react-icons/fa';
+import { FaUserCircle, FaDumbbell, FaChartLine, FaExclamationTriangle, FaBell, FaCheckCircle, FaClock, FaCommentAlt } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -271,22 +271,30 @@ const UserDashboard = () => {
                     </div>
                 </div>
 
-                <div className="bg-dark-200 mt-8 p-6 md:p-8 rounded-2xl border border-dark-400 shadow-lg">
-                    <h3 className="text-xl font-semibold text-white mb-4">Leave Feedback / Review</h3>
-                    <p className="text-gray-400 mb-6 text-sm">Share your fitness journey and experience with us!</p>
+                {/* Feedback Form Card - Compacted & Refined */}
+                <div className="bg-dark-200 mt-8 p-5 md:p-7 rounded-2xl border border-dark-400 shadow-xl max-w-2xl mx-auto">
+                    <div className="flex items-center gap-3 mb-4">
+                        <div className="p-2 bg-purple/10 rounded-lg">
+                            <FaCommentAlt className="text-purple text-lg" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg font-bold text-white leading-none">Share Your Review</h3>
+                            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mt-1">Gym Experience Feedback</p>
+                        </div>
+                    </div>
 
                     {feedbackStatus.message && (
-                        <div className={`mb-6 px-4 py-3 rounded-lg text-sm border ${feedbackStatus.type === 'success' ? 'bg-green-500/10 text-green-500 border-green-500/40' : 'bg-red-500/10 text-red-500 border-red-500/40'}`}>
+                        <div className={`mb-5 px-4 py-2.5 rounded-xl text-xs font-bold border ${feedbackStatus.type === 'success' ? 'bg-green-500/10 text-green-500 border-green-500/30' : 'bg-red-500/10 text-red-500 border-red-500/30'}`}>
                             {feedbackStatus.message}
                         </div>
                     )}
 
-                    <form onSubmit={handleFeedbackSubmit} className="space-y-5">
-                        <div className="flex flex-col md:flex-row gap-5">
-                            <div className="w-full md:w-1/3">
-                                <label className="block text-gray-300 text-sm font-medium mb-1.5 px-1">Rating (1 to 5)</label>
+                    <form onSubmit={handleFeedbackSubmit} className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2 px-1">Satisfaction Rating</label>
                                 <select
-                                    className="w-full px-4 py-2.5 bg-dark-300 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition"
+                                    className="w-full px-4 py-2.5 bg-dark-300 border border-dark-400 rounded-xl text-white text-xs focus:outline-none focus:border-purple transition cursor-pointer font-medium"
                                     value={feedbackForm.rating}
                                     onChange={(e) => setFeedbackForm({ ...feedbackForm, rating: e.target.value })}
                                 >
@@ -298,23 +306,27 @@ const UserDashboard = () => {
                                 </select>
                             </div>
                         </div>
+
                         <div>
-                            <label className="block text-gray-300 text-sm font-medium mb-1.5 px-1">Your Experience Review</label>
+                            <label className="block text-gray-400 text-[10px] font-black uppercase tracking-widest mb-2 px-1">Detailed Experience</label>
                             <textarea
-                                className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-xl text-white focus:outline-none focus:border-purple transition min-h-[120px] resize-none"
+                                className="w-full px-4 py-3 bg-dark-300 border border-dark-400 rounded-xl text-white text-sm focus:outline-none focus:border-purple transition min-h-[90px] max-h-[150px] resize-none placeholder:text-gray-600 font-medium"
                                 placeholder="Tell us about your fitness journey here..."
                                 value={feedbackForm.feedback}
                                 onChange={(e) => setFeedbackForm({ ...feedbackForm, feedback: e.target.value })}
                                 required
                             ></textarea>
                         </div>
-                        <button
-                            type="submit"
-                            disabled={isSubmittingFeedback}
-                            className={`px-8 py-3 bg-purple hover:bg-purple-700 text-white font-bold rounded-xl transition-all active:scale-95 cursor-pointer ${isSubmittingFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
-                        >
-                            {isSubmittingFeedback ? 'Submitting...' : 'Submit Feedback'}
-                        </button>
+
+                        <div className="flex justify-end">
+                            <button
+                                type="submit"
+                                disabled={isSubmittingFeedback}
+                                className={`px-6 py-3 bg-purple hover:bg-purple-700 text-white text-xs font-black uppercase tracking-widest rounded-xl transition-all active:scale-95 cursor-pointer shadow-lg shadow-purple/20 ${isSubmittingFeedback ? 'opacity-50 cursor-not-allowed' : ''}`}
+                            >
+                                {isSubmittingFeedback ? 'Submitting...' : 'Post Review'}
+                            </button>
+                        </div>
                     </form>
                 </div>
             </motion.div>
