@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
-import { FaUserCircle, FaDumbbell, FaChartLine, FaExclamationTriangle, FaBell, FaCheckCircle, FaClock, FaCommentAlt } from 'react-icons/fa';
+import { FaUserCircle, FaDumbbell, FaChartLine, FaExclamationTriangle, FaBell, FaCheckCircle, FaClock, FaCommentAlt, FaPhoneAlt } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -138,6 +138,7 @@ const UserDashboard = () => {
                         <div className="space-y-2 text-gray-400">
                             <p><span className="text-gray-300 font-medium text-sm">Name:</span> {user.name}</p>
                             <p><span className="text-gray-300 font-medium text-sm">Email:</span> {user.email}</p>
+                            <p><span className="text-gray-300 font-medium text-sm">Phone:</span> {user.phone || 'Not updated'}</p>
                             <p><span className="text-gray-300 font-medium text-sm">Role:</span> {user.role}</p>
 
                             {user.progress && user.progress.length > 0 && (

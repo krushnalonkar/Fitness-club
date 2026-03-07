@@ -104,7 +104,7 @@ const Navbar = () => {
         }
 
         try {
-            await updateProfile(user.name, user.email, formData.currentPassword, formData.newPassword);
+            await updateProfile(user.name, user.email, user.phone, formData.currentPassword, formData.newPassword);
             setUpdateStatus({ type: 'success', message: 'Password changed successfully!' });
             setTimeout(() => {
                 setIsChangingPassword(false);

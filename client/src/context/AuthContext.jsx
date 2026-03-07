@@ -55,9 +55,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const updateProfile = async (name, email, currentPassword, password, height, weight) => {
+    const updateProfile = async (name, email, phone, currentPassword, password, height, weight) => {
         try {
-            const res = await axios.put('/api/users/profile', { name, email, currentPassword, password, height, weight });
+            const res = await axios.put('/api/users/profile', { name, email, phone, currentPassword, password, height, weight });
             setUser(res.data);
             return res.data;
         } catch (error) {
