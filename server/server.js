@@ -28,9 +28,13 @@ app.use('/api/payments', require('./routes/paymentRoutes'));
 
 // Database Connection
 const mongoURI = process.env.MONGO_URI;
+const seedData = require("./seedData");
 
 mongoose.connect(mongoURI)
-  .then(() => console.log("MongoDB Connected (Cloud/Live) ✅"))
+  .then(() => {
+    console.log("MongoDB Connected (Cloud/Live) ✅");
+    seedData(); // Automatically seeds original plans/trainers to Atlas
+  })
   .catch((err) => {
     console.error("MongoDB Connection Error ❌");
     console.error(err);
