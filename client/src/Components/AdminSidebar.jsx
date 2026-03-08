@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { FaUsers, FaClipboardList, FaCommentAlt, FaSignOutAlt, FaChartPie, FaDumbbell, FaEnvelopeOpenText, FaBars, FaTimes } from 'react-icons/fa';
+import { FaUsers, FaClipboardList, FaCommentAlt, FaSignOutAlt, FaChartPie, FaDumbbell, FaEnvelopeOpenText, FaBars, FaTimes, FaUserCheck } from 'react-icons/fa';
 import { motion, AnimatePresence } from 'framer-motion';
 
 const AdminSidebar = () => {
