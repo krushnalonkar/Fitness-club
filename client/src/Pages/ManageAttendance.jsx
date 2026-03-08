@@ -75,143 +75,136 @@ const ManageAttendance = () => {
             <AdminSidebar />
             <AdminHeader />
 
-            <div className="flex-1 lg:ml-72 pt-32 lg:pt-40 px-4 sm:px-10 pb-20 overflow-y-auto bg-dark-200">
+            <div className="flex-1 lg:ml-72 pt-24 lg:pt-32 px-4 sm:px-10 pb-20 overflow-y-auto bg-dark-200">
                 <motion.div
-                    initial={{ opacity: 0, y: 30 }}
+                    initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="max-w-6xl mx-auto"
                 >
-                    {/* Header Info */}
-                    <div className="mb-10 text-center lg:text-left">
-                        <h1 className="text-3xl font-black text-white tracking-tight">
-                            Daily <span className="text-purple">Attendance</span>
-                        </h1>
-                        <p className="text-gray-500 text-[10px] font-bold uppercase tracking-[0.3em] mt-2">Member Tracking & Logs</p>
-                    </div>
+                    {/* Header Section */}
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-4">
+                        <div>
+                            <h1 className="text-2xl font-bold text-white tracking-tight">
+                                Manage <span className="text-purple">Attendance</span>
+                            </h1>
+                            <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mt-1">Daily Membership Tracking</p>
+                        </div>
 
-                    {/* The 3 STAT BOXES - Back by demand but pushed lower */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-                        {/* Box 1: Date Select */}
-                        <div className="bg-dark-100/60 p-6 rounded-[2rem] border border-white/5 shadow-2xl flex items-center gap-5">
-                            <div className="w-14 h-14 bg-purple/10 rounded-2xl flex items-center justify-center text-purple">
-                                <FaCalendarAlt size={24} />
+                        <div className="flex items-center gap-4 w-full md:w-auto">
+                            <div className="relative flex-1 md:w-64">
+                                <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                                <input
+                                    type="text"
+                                    placeholder="Search member..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="w-full bg-dark-100/50 border border-dark-400 rounded-xl py-3 pl-12 pr-4 text-white focus:outline-none focus:border-purple transition"
+                                />
                             </div>
-                            <div>
-                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Select Date</p>
+                            <div className="bg-dark-100/50 border border-dark-400 rounded-xl px-4 py-2 flex items-center gap-3">
+                                <FaCalendarAlt className="text-purple" />
                                 <input
                                     type="date"
                                     value={date}
                                     onChange={(e) => setDate(e.target.value)}
-                                    className="bg-transparent text-white font-bold text-lg focus:outline-none cursor-pointer mt-0.5"
+                                    className="bg-transparent text-white font-bold text-sm focus:outline-none cursor-pointer"
                                 />
                             </div>
                         </div>
-
-                        {/* Box 2: Present Count */}
-                        <div className="bg-dark-100/60 p-6 rounded-[2rem] border border-green-500/10 shadow-2xl flex items-center gap-5 border-l-4 border-l-green-500">
-                            <div className="w-14 h-14 bg-green-500/10 rounded-2xl flex items-center justify-center text-green-500">
-                                <FaUserCheck size={24} />
-                            </div>
-                            <div>
-                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Total Present</p>
-                                <h3 className="text-3xl font-black text-green-500">{stats.present}</h3>
-                            </div>
-                        </div>
-
-                        {/* Box 3: Absent/Not Marked Count */}
-                        <div className="bg-dark-100/60 p-6 rounded-[2rem] border border-red-500/10 shadow-2xl flex items-center gap-5 border-l-4 border-l-red-500">
-                            <div className="w-14 h-14 bg-red-500/10 rounded-2xl flex items-center justify-center text-red-500">
-                                <FaUserTimes size={24} />
-                            </div>
-                            <div>
-                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Absent / Pending</p>
-                                <h3 className="text-3xl font-black text-red-500">{users.length - stats.present}</h3>
-                            </div>
-                        </div>
                     </div>
 
-                    {/* Search Bar Block */}
-                    <div className="relative mb-10">
-                        <FaSearch className="absolute left-6 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-purple" />
-                        <input
-                            type="text"
-                            placeholder="Search member by name or email..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-dark-100/40 border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-white focus:outline-none focus:border-purple/30 focus:ring-4 focus:ring-purple/5 transition-all text-sm"
-                        />
+                    {/* Stats Grid */}
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+                        <div className="bg-dark-100/50 p-6 rounded-2xl border border-dark-400 flex items-center justify-between shadow-xl">
+                            <div>
+                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Total Present</p>
+                                <h3 className="text-3xl font-black text-green-500 mt-1">{stats.present}</h3>
+                            </div>
+                            <div className="w-12 h-12 bg-green-500/10 rounded-xl flex items-center justify-center text-green-500">
+                                <FaUserCheck size={24} />
+                            </div>
+                        </div>
+                        <div className="bg-dark-100/50 p-6 rounded-2xl border border-dark-400 flex items-center justify-between shadow-xl">
+                            <div>
+                                <p className="text-gray-500 text-[10px] font-black uppercase tracking-widest">Not Marked / Absent</p>
+                                <h3 className="text-3xl font-black text-red-500 mt-1">{users.length - stats.present}</h3>
+                            </div>
+                            <div className="w-12 h-12 bg-red-500/10 rounded-xl flex items-center justify-center text-red-500">
+                                <FaUserTimes size={24} />
+                            </div>
+                        </div>
                     </div>
 
                     {/* Table Section */}
-                    <div className="bg-dark-100/50 rounded-[2.5rem] border border-white/5 overflow-hidden shadow-2xl">
+                    <div className="bg-dark-100/50 rounded-2xl border border-dark-400 overflow-hidden shadow-2xl">
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
-                                <thead className="bg-white/[0.02] border-b border-white/5">
+                                <thead className="bg-dark-300/50 border-b border-dark-400">
                                     <tr>
-                                        <th className="px-8 py-6 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Member Directory</th>
-                                        <th className="px-8 py-6 text-gray-500 font-bold text-[10px] uppercase tracking-widest text-center">Live Status</th>
-                                        <th className="px-8 py-6 text-gray-500 font-bold text-[10px] uppercase tracking-widest text-right">Quick Mark</th>
+                                        <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest">Member Details</th>
+                                        <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest text-center">Current Status</th>
+                                        <th className="px-6 py-4 text-gray-500 font-bold text-[10px] uppercase tracking-widest text-right">Attendance Action</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-white/[0.03]">
+                                <tbody className="divide-y divide-dark-400">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="3" className="px-8 py-32 text-center">
-                                                <div className="flex flex-col items-center gap-4">
-                                                    <div className="w-10 h-10 border-4 border-purple border-t-transparent rounded-full animate-spin"></div>
-                                                    <p className="text-[10px] font-black uppercase tracking-widest text-purple">Fetching Attendance...</p>
+                                            <td colSpan="3" className="px-6 py-20 text-center">
+                                                <div className="flex flex-col items-center gap-2">
+                                                    <div className="w-8 h-8 border-4 border-purple border-t-transparent rounded-full animate-spin"></div>
+                                                    <p className="text-[10px] font-black uppercase tracking-widest text-gray-500 mt-2">Syncing Records...</p>
                                                 </div>
                                             </td>
                                         </tr>
                                     ) : filteredUsers.length === 0 ? (
                                         <tr>
-                                            <td colSpan="3" className="px-8 py-20 text-center text-gray-500 italic">No records found.</td>
+                                            <td colSpan="3" className="px-6 py-10 text-center text-gray-500 italic text-sm">No members found.</td>
                                         </tr>
                                     ) : (
                                         filteredUsers.map((user) => (
-                                            <tr key={user._id} className="hover:bg-white/[0.01] transition-all group">
-                                                <td className="px-8 py-6">
-                                                    <div className="flex items-center gap-4">
-                                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple/20 to-purple/5 border border-purple/20 flex items-center justify-center text-purple font-black shadow-inner">
-                                                            {user.name.charAt(0)}
+                                            <tr key={user._id} className="hover:bg-dark-300/30 transition group">
+                                                <td className="px-6 py-4">
+                                                    <div className="flex items-center gap-3">
+                                                        <div className="p-2 bg-purple/10 rounded-lg text-purple group-hover:bg-purple group-hover:text-white transition duration-300">
+                                                            <FaUserCircle size={20} />
                                                         </div>
                                                         <div>
-                                                            <div className="text-white text-sm font-bold tracking-tight capitalize group-hover:text-purple transition-colors">{user.name}</div>
-                                                            <div className="text-[10px] text-gray-600 font-medium mt-0.5">{user.email}</div>
+                                                            <div className="text-white text-sm font-semibold tracking-tight capitalize">{user.name}</div>
+                                                            <div className="text-[10px] text-gray-500 font-medium">{user.email}</div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-8 py-6 text-center">
-                                                    <span className={`px-4 py-2 rounded-xl text-[9px] font-black uppercase tracking-widest border inline-block min-w-[110px] ${attendance[user._id] === 'Present'
-                                                            ? 'bg-green-500/10 text-green-500 border-green-500/20 shadow-[0_0_20px_rgba(34,197,94,0.1)]'
+                                                <td className="px-6 py-4 text-center">
+                                                    <span className={`px-3 py-1 rounded-md text-[9px] font-black uppercase tracking-widest border inline-block min-w-[100px] ${attendance[user._id] === 'Present'
+                                                            ? 'bg-green-500/10 text-green-500 border-green-500/20'
                                                             : attendance[user._id] === 'Absent'
-                                                                ? 'bg-red-500/10 text-red-500 border-red-500/20 shadow-[0_0_20px_rgba(239,68,68,0.1)]'
-                                                                : 'bg-white/5 text-gray-600 border-white/5'
+                                                                ? 'bg-red-500/10 text-red-500 border-red-500/20'
+                                                                : 'bg-dark-300 text-gray-500 border-dark-400'
                                                         }`}>
                                                         {attendance[user._id] || 'Not Marked'}
                                                     </span>
                                                 </td>
-                                                <td className="px-8 py-6 text-right">
+                                                <td className="px-6 py-4 text-right">
                                                     <div className="flex justify-end gap-3">
                                                         <button
                                                             onClick={() => handleStatusChange(user._id, 'Present')}
-                                                            className={`w-12 h-12 rounded-2xl transition-all border flex items-center justify-center ${attendance[user._id] === 'Present'
-                                                                    ? 'bg-green-500 border-green-500 text-white shadow-xl shadow-green-500/20 scale-110'
-                                                                    : 'bg-white/5 border-white/5 text-gray-600 hover:border-green-500/50 hover:text-green-500'
+                                                            className={`p-2.5 rounded-xl transition-all border ${attendance[user._id] === 'Present'
+                                                                    ? 'bg-green-500 border-green-500 text-white shadow-lg shadow-green-500/20'
+                                                                    : 'bg-dark-300 border-dark-400 text-gray-500 hover:border-green-500/50 hover:text-green-500'
                                                                 }`}
                                                             title="Mark Present"
                                                         >
-                                                            <FaUserCheck size={20} />
+                                                            <FaUserCheck size={16} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleStatusChange(user._id, 'Absent')}
-                                                            className={`w-12 h-12 rounded-2xl transition-all border flex items-center justify-center ${attendance[user._id] === 'Absent'
-                                                                    ? 'bg-red-500 border-red-500 text-white shadow-xl shadow-red-500/20 scale-110'
-                                                                    : 'bg-white/5 border-white/5 text-gray-600 hover:border-red-500/50 hover:text-red-500'
+                                                            className={`p-2.5 rounded-xl transition-all border ${attendance[user._id] === 'Absent'
+                                                                    ? 'bg-red-500 border-red-500 text-white shadow-lg shadow-red-500/20'
+                                                                    : 'bg-dark-300 border-dark-400 text-gray-500 hover:border-red-500/50 hover:text-red-500'
                                                                 }`}
                                                             title="Mark Absent"
                                                         >
-                                                            <FaUserTimes size={20} />
+                                                            <FaUserTimes size={16} />
                                                         </button>
                                                     </div>
                                                 </td>
