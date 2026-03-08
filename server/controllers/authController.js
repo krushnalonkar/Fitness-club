@@ -27,13 +27,15 @@ const registerUser = async (req, res) => {
             });
         }
 
+        const adminEmail = process.env.ADMIN_EMAIL || 'lonkarkrushna13@gmail.com';
+
         const user = await User.create({
             name,
             email,
             phone,
             password,
-            // Automatically make the primary owner an admin
-            role: email === 'lonkarkrushna13@gmail.com' ? 'admin' : 'user',
+            // Automatically make the specified email an admin
+            role: email === adminEmail ? 'admin' : 'user',
             progress: (height || weight) ? [{ height, weight }] : []
         });
 

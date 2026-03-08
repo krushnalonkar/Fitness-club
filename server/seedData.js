@@ -2,39 +2,40 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 const Plan = require("./models/Plan");
 const Trainer = require("./models/Trainer");
+const Admin = require("./models/Admin");
 
 const plans = [
     {
         name: "Basic Plan",
-        price: "₹999",
+        price: "999",
         duration: "/month",
         features: ["Gym Access", "Basic Workout Plan", "Locker Facility", "1 Trainer Support"],
         popular: false
     },
     {
         name: "Standard Plan",
-        price: "₹1999",
+        price: "1999",
         duration: "/month",
         features: ["Full Gym Access", "Personal Workout Plan", "Diet Guidance", "Cardio + Strength Training", "Trainer Support"],
         popular: true
     },
     {
         name: "Pro Plan",
-        price: "₹2999",
+        price: "2999",
         duration: "/month",
         features: ["Everything in Standard", "Personal Trainer", "Advanced Programs", "Body Transformation Plan", "Priority Support"],
         popular: false
     },
     {
         name: "Elite Plan",
-        price: "₹4999",
+        price: "4999",
         duration: "/month",
         features: ["All Pro Features", "1-on-1 Coaching", "Custom Diet Plan", "Supplement Guidance", "Premium Support"],
         popular: false
     }
 ];
 
-const trainers = [
+const trainersData = [
     {
         name: "John Doe",
         specialization: "Bodybuilding",
@@ -60,19 +61,38 @@ const seedData = async () => {
         const mongoURI = process.env.MONGO_URI;
         if (!mongoURI) return;
 
-        console.log("Auto-Seeding Data to Atlas...");
+        console.log("Checking Initial Data in Atlas...");
 
-        // Remove existing and add original plans
-        await Plan.deleteMany({});
-        await Plan.insertMany(plans);
-
-        // Ensure trainers are also present
-        const trainerCount = await Trainer.countDocuments();
-        if (trainerCount === 0) {
-            await Trainer.insertMany(trainers);
+        // 1. Seed Plans
+        const planCount = await Plan.countDocuments();
+        if (planCount === 0) {
+            console.log("Seeding Plans...");
+            await Plan.insertMany(plans);
+            console.log("Plans Seeded! ✅");
         }
 
-        console.log("Atlas Data Synced Successfully! ✅");
+        // 2. Seed Trainers
+        const trainerCount = await Trainer.countDocuments();
+        if (trainerCount === 0) {
+            console.log("Seeding Trainers...");
+            await Trainer.insertMany(trainersData);
+            console.log("Trainers Seeded! ✅");
+        }
+
+        // 3. Create Default Admin if not exists
+        const adminCount = await Admin.countDocuments();
+        if (adminCount === 0) {
+            console.log("Creating Default Admin Account...");
+            await Admin.create({
+                name: "Super Admin",
+                email: "admin@gym.com",
+                password: "admin123", // Will be hashed automatically by the model pre-save hook
+                role: "admin"
+            });
+            console.log("Default Admin Created! ✅ ID: admin@gym.com / Pass: admin123");
+        }
+
+        console.log("Atlas Data Check Completed! ✅");
     } catch (error) {
         console.error("Seeding Error:", error);
     }
