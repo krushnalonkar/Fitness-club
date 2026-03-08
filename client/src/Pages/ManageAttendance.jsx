@@ -23,26 +23,21 @@ const ManageAttendance = () => {
             const token = localStorage.getItem('userInfo') ? JSON.parse(localStorage.getItem('userInfo')).token : null;
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
-            // Fetch all users
             const { data: userData } = await axios.get('/api/users', config);
             setUsers(userData);
 
-            // Fetch attendance for the specific date
             const { data: attendanceData } = await axios.get(`/api/attendance/date/${date}`, config);
 
-            // Map existing attendance to a state object for easy access
             const attendanceMap = {};
             let pCount = 0;
-            let aCount = 0;
 
             attendanceData.forEach(record => {
                 attendanceMap[record.user._id] = record.status;
                 if (record.status === 'Present') pCount++;
-                else aCount++;
             });
 
             setAttendance(attendanceMap);
-            setStats({ present: pCount, absent: aCount });
+            setStats({ present: pCount, absent: userData.length - pCount });
         } catch (error) {
             console.error('Error fetching data:', error);
         } finally {
@@ -56,16 +51,13 @@ const ManageAttendance = () => {
             const config = { headers: { Authorization: `Bearer ${token}` } };
 
             await axios.post('/api/attendance', { userId, date, status }, config);
-
-            // Update local state
             setAttendance(prev => ({ ...prev, [userId]: status }));
 
-            // Recalculate stats locally for better UX
             const newAttendance = { ...attendance, [userId]: status };
-            const values = Object.values(newAttendance);
+            const presentCount = Object.values(newAttendance).filter(v => v === 'Present').length;
             setStats({
-                present: values.filter(v => v === 'Present').length,
-                absent: values.filter(v => v === 'Absent').length
+                present: presentCount,
+                absent: users.length - presentCount
             });
 
         } catch (error) {
@@ -79,167 +71,139 @@ const ManageAttendance = () => {
     );
 
     return (
-        <div className="flex min-h-screen bg-gray-900 text-white">
+        <div className="flex min-h-screen bg-[#0f111a] text-white">
             <AdminSidebar />
-            <div className="flex-1 ml-64">
-                <AdminHeader title="Manage Attendance" />
 
-                <main className="p-8">
-                    {/* Header Cards */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-gray-400 text-sm font-medium">Date Selected</p>
-                                    <input
-                                        type="date"
-                                        value={date}
-                                        onChange={(e) => setDate(e.target.value)}
-                                        className="bg-transparent text-xl font-bold focus:outline-none text-orange-500 mt-1 cursor-pointer"
-                                    />
-                                </div>
-                                <div className="p-3 bg-orange-500/10 rounded-xl">
-                                    <FaCalendarAlt className="text-orange-500 text-2xl" />
-                                </div>
+            <div className="flex-1 lg:ml-72 transition-all duration-300">
+                <AdminHeader title="Attendance Logs" />
+
+                <main className="p-4 md:p-8">
+                    {/* Upper Stats & Date Select */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-3xl flex items-center gap-5">
+                            <div className="w-14 h-14 bg-purple/20 rounded-2xl flex items-center justify-center">
+                                <FaCalendarAlt className="text-purple text-2xl" />
+                            </div>
+                            <div className="flex-1">
+                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Select Date</p>
+                                <input
+                                    type="date"
+                                    value={date}
+                                    onChange={(e) => setDate(e.target.value)}
+                                    className="bg-transparent text-white font-bold text-lg focus:outline-none w-full cursor-pointer"
+                                />
                             </div>
                         </motion.div>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.1 }}
-                            className="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-gray-400 text-sm font-medium">Present Today</p>
-                                    <h3 className="text-3xl font-bold text-green-500">{stats.present}</h3>
-                                </div>
-                                <div className="p-3 bg-green-500/10 rounded-xl">
-                                    <FaUserCheck className="text-green-500 text-2xl" />
-                                </div>
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }} className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-3xl flex items-center gap-5 border-l-4 border-l-green-500">
+                            <div className="w-14 h-14 bg-green-500/20 rounded-2xl flex items-center justify-center">
+                                <FaUserCheck className="text-green-500 text-2xl" />
+                            </div>
+                            <div>
+                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Present</p>
+                                <h3 className="text-2xl font-black">{stats.present}</h3>
                             </div>
                         </motion.div>
 
-                        <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: 0.2 }}
-                            className="bg-gray-800 p-6 rounded-2xl border border-gray-700 shadow-xl"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-gray-400 text-sm font-medium">Absent / Not Marked</p>
-                                    <h3 className="text-3xl font-bold text-red-500">{users.length - stats.present}</h3>
-                                </div>
-                                <div className="p-3 bg-red-500/10 rounded-xl">
-                                    <FaUserTimes className="text-red-500 text-2xl" />
-                                </div>
+                        <motion.div initial={{ opacity: 0, y: -10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }} className="bg-white/5 backdrop-blur-md border border-white/10 p-5 rounded-3xl flex items-center gap-5 border-l-4 border-l-red-500/50">
+                            <div className="w-14 h-14 bg-red-500/20 rounded-2xl flex items-center justify-center">
+                                <FaUserTimes className="text-red-500 text-2xl" />
+                            </div>
+                            <div>
+                                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest">Absent / Pending</p>
+                                <h3 className="text-2xl font-black">{users.length - stats.present}</h3>
                             </div>
                         </motion.div>
                     </div>
 
-                    {/* Search Bar */}
-                    <div className="mb-6 relative">
-                        <FaSearch className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
+                    {/* Search Section */}
+                    <div className="relative mb-8 group">
+                        <div className="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <FaSearch className="text-gray-500 group-focus-within:text-purple transition-colors" />
+                        </div>
                         <input
                             type="text"
-                            placeholder="Search by name or email..."
+                            placeholder="Find a member..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-gray-800 border border-gray-700 rounded-xl py-3 pl-12 pr-4 focus:outline-none focus:border-orange-500 transition-all shadow-lg"
+                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-6 focus:outline-none focus:border-purple/50 focus:ring-4 focus:ring-purple/10 transition-all text-lg placeholder:text-gray-600 shadow-xl"
                         />
                     </div>
 
-                    {/* Users Table */}
-                    <div className="bg-gray-800 rounded-2xl border border-gray-700 overflow-hidden shadow-2xl">
-                        <table className="w-full text-left">
-                            <thead className="bg-gray-900/50 border-b border-gray-700">
-                                <tr>
-                                    <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Member</th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider text-center">Status</th>
-                                    <th className="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody className="divide-y divide-gray-700">
-                                <AnimatePresence>
+                    {/* Data Table */}
+                    <div className="bg-white/5 backdrop-blur-md border border-white/10 rounded-3xl overflow-hidden shadow-2xl">
+                        <div className="overflow-x-auto">
+                            <table className="w-full text-left">
+                                <thead className="bg-white/5">
+                                    <tr>
+                                        <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em]">Member Info</th>
+                                        <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-center">Current Status</th>
+                                        <th className="px-8 py-5 text-[10px] font-black text-gray-400 uppercase tracking-[0.2em] text-right">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="divide-y divide-white/5">
                                     {loading ? (
                                         <tr>
-                                            <td colSpan="3" className="px-6 py-20 text-center text-gray-400">
-                                                <div className="flex flex-col items-center justify-center animate-pulse">
-                                                    <div className="w-12 h-12 bg-gray-700 rounded-full mb-4"></div>
-                                                    <p>Loading members...</p>
-                                                </div>
+                                            <td colSpan="3" className="px-8 py-20 text-center">
+                                                <div className="flex justify-center"><div className="w-10 h-10 border-4 border-purple border-t-transparent rounded-full animate-spin"></div></div>
                                             </td>
                                         </tr>
                                     ) : filteredUsers.length === 0 ? (
                                         <tr>
-                                            <td colSpan="3" className="px-6 py-10 text-center text-gray-400">No members found matching your search.</td>
+                                            <td colSpan="3" className="px-8 py-10 text-center text-gray-500">No matching members found.</td>
                                         </tr>
                                     ) : (
-                                        filteredUsers.map((user, index) => (
-                                            <motion.tr
-                                                layout
-                                                initial={{ opacity: 0 }}
-                                                animate={{ opacity: 1 }}
-                                                key={user._id}
-                                                className="hover:bg-gray-700/30 transition-colors group"
-                                            >
-                                                <td className="px-6 py-4">
-                                                    <div className="flex items-center">
-                                                        <div className="h-10 w-10 rounded-full bg-gradient-to-br from-orange-500 to-red-500 flex items-center justify-center font-bold text-white mr-3 shadow-lg">
+                                        filteredUsers.map((user) => (
+                                            <tr key={user._id} className="hover:bg-white/[0.02] transition-colors group">
+                                                <td className="px-8 py-5">
+                                                    <div className="flex items-center gap-4">
+                                                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-purple to-indigo-600 flex items-center justify-center font-black text-lg shadow-lg">
                                                             {user.name.charAt(0)}
                                                         </div>
                                                         <div>
-                                                            <div className="font-medium text-gray-200">{user.name}</div>
-                                                            <div className="text-sm text-gray-500">{user.email}</div>
+                                                            <div className="font-bold text-gray-200 group-hover:text-white transition-colors capitalize">{user.name}</div>
+                                                            <div className="text-xs text-gray-500 font-medium">{user.email}</div>
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-6 py-4 text-center">
-                                                    <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${attendance[user._id] === 'Present'
-                                                            ? 'bg-green-500/20 text-green-500 border border-green-500/30'
+                                                <td className="px-8 py-5 text-center">
+                                                    <span className={`inline-flex items-center px-4 py-1.5 rounded-xl text-[10px] font-black uppercase tracking-wider border ${attendance[user._id] === 'Present'
+                                                            ? 'bg-green-500/10 text-green-500 border-green-500/20'
                                                             : attendance[user._id] === 'Absent'
-                                                                ? 'bg-red-500/20 text-red-500 border border-red-500/30'
-                                                                : 'bg-gray-600/20 text-gray-400 border border-gray-600/30'
+                                                                ? 'bg-red-500/10 text-red-500 border-red-500/20'
+                                                                : 'bg-white/5 text-gray-500 border-white/10'
                                                         }`}>
                                                         {attendance[user._id] || 'Not Marked'}
                                                     </span>
                                                 </td>
-                                                <td className="px-6 py-4 text-right">
-                                                    <div className="flex justify-end space-x-2">
+                                                <td className="px-8 py-5 text-right">
+                                                    <div className="flex justify-end gap-3">
                                                         <button
                                                             onClick={() => handleStatusChange(user._id, 'Present')}
-                                                            className={`p-2 rounded-lg transition-all ${attendance[user._id] === 'Present'
-                                                                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/30 scale-110'
-                                                                    : 'bg-gray-700 text-gray-400 hover:bg-green-500/20 hover:text-green-500'
+                                                            className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${attendance[user._id] === 'Present'
+                                                                    ? 'bg-green-500 text-white shadow-lg shadow-green-500/20 scale-105'
+                                                                    : 'bg-white/5 text-gray-500 hover:bg-green-500/20 hover:text-green-500 border border-white/5'
                                                                 }`}
-                                                            title="Mark Present"
                                                         >
-                                                            <FaUserCheck />
+                                                            <FaUserCheck size={18} />
                                                         </button>
                                                         <button
                                                             onClick={() => handleStatusChange(user._id, 'Absent')}
-                                                            className={`p-2 rounded-lg transition-all ${attendance[user._id] === 'Absent'
-                                                                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/30 scale-110'
-                                                                    : 'bg-gray-700 text-gray-400 hover:bg-red-500/20 hover:text-red-500'
+                                                            className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${attendance[user._id] === 'Absent'
+                                                                    ? 'bg-red-500 text-white shadow-lg shadow-red-500/20 scale-105'
+                                                                    : 'bg-white/5 text-gray-500 hover:bg-red-500/20 hover:text-red-500 border border-white/5'
                                                                 }`}
-                                                            title="Mark Absent"
                                                         >
-                                                            <FaUserTimes />
+                                                            <FaUserTimes size={18} />
                                                         </button>
                                                     </div>
                                                 </td>
-                                            </motion.tr>
+                                            </tr>
                                         ))
                                     )}
-                                </AnimatePresence>
-                            </tbody>
-                        </table>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </main>
             </div>
