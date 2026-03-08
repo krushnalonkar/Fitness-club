@@ -7,52 +7,93 @@ const Admin = require("./models/Admin");
 const plans = [
     {
         name: "Basic Plan",
-        price: "999",
+        price: "₹999",
         duration: "/month",
-        features: ["Gym Access", "Basic Workout Plan", "Locker Facility", "1 Trainer Support"],
-        popular: false
+        popular: false,
+        features: [
+            "Gym Access",
+            "Basic Workout Plan",
+            "Locker Facility",
+            "1 Trainer Support",
+        ],
     },
     {
         name: "Standard Plan",
-        price: "1999",
+        price: "₹1999",
         duration: "/month",
-        features: ["Full Gym Access", "Personal Workout Plan", "Diet Guidance", "Cardio + Strength Training", "Trainer Support"],
-        popular: true
+        popular: true,
+        features: [
+            "Full Gym Access",
+            "Personal Workout Plan",
+            "Diet Guidance",
+            "Cardio + Strength Training",
+            "Trainer Support",
+        ],
     },
     {
         name: "Pro Plan",
-        price: "2999",
+        price: "₹2999",
         duration: "/month",
-        features: ["Everything in Standard", "Personal Trainer", "Advanced Programs", "Body Transformation Plan", "Priority Support"],
-        popular: false
+        popular: false,
+        features: [
+            "Everything in Standard",
+            "Personal Trainer",
+            "Advanced Programs",
+            "Body Transformation Plan",
+            "Priority Support",
+        ],
     },
     {
         name: "Elite Plan",
-        price: "4999",
+        price: "₹4999",
         duration: "/month",
-        features: ["All Pro Features", "1-on-1 Coaching", "Custom Diet Plan", "Supplement Guidance", "Premium Support"],
-        popular: false
-    }
+        popular: false,
+        features: [
+            "All Pro Features",
+            "1-on-1 Coaching",
+            "Custom Diet Plan",
+            "Supplement Guidance",
+            "Premium Support",
+        ],
+    },
 ];
 
 const trainersData = [
     {
-        name: "John Doe",
-        specialty: "Bodybuilding",
-        experience: "8 Years",
-        image: "https://images.unsplash.com/photo-1594381898411-846e7d193883?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+        name: "Rahul Sharma",
+        specialty: "Strength Coach",
+        experience: "8+ Years",
+        image: "/trainers/trainer1.png"
     },
     {
-        name: "Sarah Jenkins",
-        specialty: "Yoga & Flexibility",
-        experience: "5 Years",
-        image: "https://images.unsplash.com/photo-1518611012118-2969c636022d?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+        name: "Amit Patil",
+        specialty: "Personal Trainer",
+        experience: "6+ Years",
+        image: "/trainers/trainer2.png"
     },
     {
-        name: "Mike Tyson",
-        specialty: "Boxing & Cardio",
-        experience: "12 Years",
-        image: "https://images.unsplash.com/photo-1549476464-37392f71752a?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=80"
+        name: "Sneha Fitness",
+        specialty: "Cardio Specialist",
+        experience: "5+ Years",
+        image: "/trainers/trainer3.png"
+    },
+    {
+        name: "Vikram Singh",
+        specialty: "Bodybuilding Coach",
+        experience: "7+ Years",
+        image: "/trainers/trainer4.png"
+    },
+    {
+        name: "Anjali Verma",
+        specialty: "Fitness Trainer",
+        experience: "4+ Years",
+        image: "/trainers/trainer5.png"
+    },
+    {
+        name: "Rohit Deshmukh",
+        specialty: "Functional Trainer",
+        experience: "5+ Years",
+        image: "/trainers/trainer6.png"
     }
 ];
 
@@ -61,27 +102,19 @@ const seedData = async () => {
         const mongoURI = process.env.MONGO_URI;
         if (!mongoURI) return;
 
-        console.log("Auto-Seeding Data to Atlas...");
+        console.log("Checking Initial Data in Atlas...");
 
         // 1. Seed Plans
-        const planCount = await Plan.countDocuments();
-        if (planCount === 0) {
-            console.log("Seeding Plans...");
-            await Plan.insertMany(plans);
-            console.log("Plans Seeded! ✅");
-        } else {
-            console.log("Plans already exist. Skipping.");
-        }
+        console.log("Refreshing Plans...");
+        await Plan.deleteMany({});
+        await Plan.insertMany(plans);
+        console.log("Plans Restored! ✅");
 
         // 2. Seed Trainers
-        const trainerCount = await Trainer.countDocuments();
-        if (trainerCount === 0) {
-            console.log("Seeding Trainers...");
-            await Trainer.insertMany(trainersData);
-            console.log("Trainers Seeded! ✅");
-        } else {
-            console.log("Trainers already exist. Skipping.");
-        }
+        console.log("Refreshing Trainers...");
+        await Trainer.deleteMany({});
+        await Trainer.insertMany(trainersData);
+        console.log("Trainers Restored! ✅");
 
         // 3. Create Default Admin if not exists
         const adminCount = await Admin.countDocuments();
@@ -94,11 +127,9 @@ const seedData = async () => {
                 role: "admin"
             });
             console.log("Default Admin Created! ✅ ID: admin@gym.com / Pass: admin123");
-        } else {
-            console.log("Admin already exists. Skipping.");
         }
 
-        console.log("Atlas Data Check Completed! ✅");
+        console.log("Atlas Data Sync Completed! ✅");
     } catch (error) {
         console.error("Seeding Error:", error);
     }
