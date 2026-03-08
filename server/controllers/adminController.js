@@ -15,19 +15,32 @@ const generateToken = (id) => {
 const adminLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
-        const admin = await Admin.findOne({ email });
 
+        // 1. Check Admin Collection
+        const admin = await Admin.findOne({ email });
         if (admin && (await admin.matchPassword(password))) {
-            res.json({
+            return res.json({
                 _id: admin._id,
                 name: admin.name,
                 email: admin.email,
                 role: 'admin',
                 token: generateToken(admin._id),
             });
-        } else {
-            res.status(401).json({ message: 'Invalid Admin Credentials' });
         }
+
+        // 2. Fallback: Check User Collection (incase owner registered via signup)
+        const userAdmin = await User.findOne({ email, role: 'admin' });
+        if (userAdmin && (await userAdmin.matchPassword(password))) {
+            return res.json({
+                _id: userAdmin._id,
+                name: userAdmin.name,
+                email: userAdmin.email,
+                role: 'admin',
+                token: generateToken(userAdmin._id),
+            });
+        }
+
+        res.status(401).json({ message: 'Invalid Admin Credentials' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
