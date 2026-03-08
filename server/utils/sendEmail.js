@@ -43,7 +43,15 @@ const sendEmail = async (options) => {
     };
 
     // 3. Send email
-    await transporter.sendMail(mailOptions);
+    try {
+        console.log(`Attempting to send email to ${options.email}...`);
+        const info = await transporter.sendMail(mailOptions);
+        console.log(`✅ Email sent successfully: ${info.response}`);
+        return info;
+    } catch (error) {
+        console.error(`❌ Mailer Error for ${options.email}:`, error.message);
+        throw error;
+    }
 };
 
 module.exports = sendEmail;
