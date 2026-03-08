@@ -64,11 +64,10 @@ const ManageInquiries = () => {
             });
 
             if (res.status === 200) {
+                alert("Reply sent successfully!");
                 setReplyText('');
                 setSelectedInquiry(null); // Close Modal
-                fetchInquiries(); // Refresh Dashboard List
-                // 💡 Instant Notification Header Update
-                window.dispatchEvent(new Event('refreshNotifications'));
+                window.location.reload(); // Force refresh to show changes
             }
         } catch (error) {
             console.error("Reply Error:", error);
