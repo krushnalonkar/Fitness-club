@@ -17,25 +17,19 @@ jobs:
       uses: actions/setup-node@v3
       with:
         node-version: '18.x'
-        cache: 'npm'
 
     - name: Install Client Dependencies
-      run: |
-        cd client
-        npm install
+      working-directory: ./client
+      run: npm install
 
     - name: Build Client
-      run: |
-        cd client
-        npm run build --if-present
+      working-directory: ./client
+      run: npm run build --if-present
 
     - name: Install Server Dependencies
-      run: |
-        cd server
-        npm install
+      working-directory: ./server
+      run: npm install
 
     - name: Test Server
-      run: |
-        cd server
-        # Add npm test here if you have tests defined
-        echo "Server built and ready for deployment"
+      working-directory: ./server
+      run: echo "Server ready for deployment"
