@@ -100,26 +100,29 @@ const replyToInquiry = async (req, res) => {
                 console.log(`Internal Notification sent to registered member: ${registeredUser.name}`);
             }
 
-            // 🔥 REAL EMAIL SENDING (via NodeMailer)
-            try {
-                if (process.env.EMAIL_USER && process.env.EMAIL_PASS && process.env.EMAIL_PASS !== 'your_app_password_here') {
-                    await sendEmail({
-                        email: inquiry.email,
-                        name: inquiry.name,
-                        subject: `Re: ${inquiry.subject}`,
-                        originSubject: inquiry.subject,
-                        message: reply
-                    });
-                    console.log(`✅ Real Email sent to: ${inquiry.email}`);
-                } else {
-                    console.warn(`🛑 Skipping Email: SMTP Credentials missing in .env`);
-                }
-            } catch (emailErr) {
-                console.error("❌ NodeMailer Error:", emailErr.message);
-                // We don't fail the whole request just because email failed
-            }
-
+            // 🔥 SEND RESPONSE EARLY to avoid UI delay
             res.json({ message: 'Reply processed successfully' });
+
+            // 📩 BACKGROUND EMAIL SENDING (via NodeMailer)
+            const hasCreds = process.env.EMAIL_USER &&
+                process.env.EMAIL_PASS &&
+                process.env.EMAIL_PASS !== 'your_app_password_here';
+
+            if (hasCreds) {
+                sendEmail({
+                    email: inquiry.email,
+                    name: inquiry.name,
+                    subject: `Re: ${inquiry.subject}`,
+                    originSubject: inquiry.subject,
+                    message: reply
+                }).then(() => {
+                    console.log(`✅ Real Email sent to: ${inquiry.email}`);
+                }).catch((emailErr) => {
+                    console.error("❌ NodeMailer Error:", emailErr.message);
+                });
+            } else {
+                console.warn(`🛑 Skipping Email: SMTP Credentials missing in .env`);
+            }
         } else {
             res.status(404).json({ message: 'Inquiry not found' });
         }
