@@ -1,0 +1,41 @@
+name: Gym Portal CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Use Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18.x'
+        cache: 'npm'
+
+    - name: Install Client Dependencies
+      run: |
+        cd client
+        npm install
+
+    - name: Build Client
+      run: |
+        cd client
+        npm run build --if-present
+
+    - name: Install Server Dependencies
+      run: |
+        cd server
+        npm install
+
+    - name: Test Server
+      run: |
+        cd server
+        # Add npm test here if you have tests defined
+        echo "Server built and ready for deployment"
