@@ -97,16 +97,16 @@ function Hero() {
                 ))}
             </Swiper>
 
-            {/* Plain Arrows */}
+            {/* Plain Arrows - hidden on mobile */}
             <div
                 ref={prevRef}
-                className="absolute top-1/2 left-4 transform -translate-y-1/2 z-10 cursor-pointer text-white text-3xl"
+                className="hidden md:block absolute top-1/2 left-4 transform -translate-y-1/2 z-10 cursor-pointer text-white text-3xl"
             >
                 <FaChevronLeft />
             </div>
             <div
                 ref={nextRef}
-                className="absolute top-1/2 right-4 transform -translate-y-1/2 z-10 cursor-pointer text-white text-3xl"
+                className="hidden md:block absolute top-1/2 right-4 transform -translate-y-1/2 z-10 cursor-pointer text-white text-3xl"
             >
                 <FaChevronRight />
             </div>
