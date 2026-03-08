@@ -12,6 +12,7 @@ const AdminSidebar = () => {
         { name: 'Manage Users', path: '/admin/users', icon: <FaUsers /> },
         { name: 'Manage Trainers', path: '/admin/trainers', icon: <FaDumbbell /> },
         { name: 'Gym Plans', path: '/admin/plans', icon: <FaClipboardList /> },
+        { name: 'Attendance', path: '/admin/attendance', icon: <FaUserCheck /> },
         { name: 'Testimonials', path: '/admin/testimonials', icon: <FaCommentAlt /> },
         { name: 'Inquiries', path: '/admin/inquiries', icon: <FaEnvelopeOpenText /> },
     ];

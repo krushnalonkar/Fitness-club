@@ -25,6 +25,7 @@ app.use('/api/trainers', require('./routes/trainerRoutes'));
 app.use('/api/contacts', require('./routes/contactRoutes'));
 app.use('/api/notifications', require('./routes/notificationRoutes'));
 app.use('/api/payments', require('./routes/paymentRoutes'));
+app.use('/api/attendance', require('./routes/attendanceRoutes'));
 
 // Database Connection
 const mongoURI = process.env.MONGO_URI;

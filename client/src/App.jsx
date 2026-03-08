@@ -11,6 +11,7 @@ import ManageTestimonials from './Pages/ManageTestimonials'
 import ManagePlans from './Pages/ManagePlans'
 import ManageTrainers from './Pages/ManageTrainers'
 import ManageInquiries from './Pages/ManageInquiries'
+import ManageAttendance from './Pages/ManageAttendance'
 import AdminUserDetails from './Pages/AdminUserDetails'
 import ForgotPassword from './Pages/ForgotPassword'
 import ResetPassword from './Pages/ResetPassword'
@@ -78,6 +79,11 @@ function App() {
         <Route path='/admin/inquiries' element={
           <ProtectedRoute adminOnly={true}>
             <ManageInquiries />
+          </ProtectedRoute>
+        } />
+        <Route path='/admin/attendance' element={
+          <ProtectedRoute adminOnly={true}>
+            <ManageAttendance />
           </ProtectedRoute>
         } />
 
