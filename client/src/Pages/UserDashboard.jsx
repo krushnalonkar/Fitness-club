@@ -11,6 +11,10 @@ const UserDashboard = () => {
 
     const [attendance, setAttendance] = useState([]);
     const [attendanceStats, setAttendanceStats] = useState({ percentage: 0, total: 0, present: 0 });
+    const [notifications, setNotifications] = useState([]);
+    const [feedbackForm, setFeedbackForm] = useState({ rating: 5, feedback: '' });
+    const [feedbackStatus, setFeedbackStatus] = useState({ type: '', message: '' });
+    const [isSubmittingFeedback, setIsSubmittingFeedback] = useState(false);
 
     useEffect(() => {
         if (user) {
