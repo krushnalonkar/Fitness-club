@@ -64,10 +64,20 @@ const ManageInquiries = () => {
             });
 
             if (res.status === 200) {
-                alert(res.data.message || "Reply sent successfully!");
+                // 1. Close modal immediately
+                setSelectedInquiry(null);
                 setReplyText('');
-                setSelectedInquiry(null); // Close Modal
-                window.location.reload(); // Force refresh to show changes
+                setIsSubmitting(false);
+
+                // 2. Update local state instead of reloading page (FASTER)
+                setInquiries(prev => prev.map(item => 
+                    item._id === selectedInquiry._id 
+                        ? { ...item, status: 'replied', adminReply: replyText } 
+                        : item
+                ));
+
+                // 3. Show alert at the end
+                alert(res.data.message || "Reply sent successfully!");
             }
         } catch (error) {
             console.error("Reply Error:", error);
