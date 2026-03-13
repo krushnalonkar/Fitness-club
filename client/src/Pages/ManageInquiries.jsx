@@ -64,7 +64,7 @@ const ManageInquiries = () => {
             });
 
             if (res.status === 200) {
-                alert("Reply sent successfully!");
+                alert(res.data.message || "Reply sent successfully!");
                 setReplyText('');
                 setSelectedInquiry(null); // Close Modal
                 window.location.reload(); // Force refresh to show changes
