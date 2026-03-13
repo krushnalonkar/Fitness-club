@@ -100,33 +100,33 @@ const replyToInquiry = async (req, res) => {
                 console.log(`Internal Notification sent to registered member: ${registeredUser.name}`);
             }
 
-            // 🔥 SEND RESPONSE EARLY
-            // This makes the UI instant and "SENDING..." will disappear immediately.
-            res.json({ message: 'Reply saved! Email sending in background... 📨' });
-
-            // 📩 BACKGROUND EMAIL SENDING
-            const hasCreds = process.env.EMAIL_USER &&
-                process.env.EMAIL_PASS &&
-                process.env.EMAIL_PASS !== 'your_app_password_here';
+            // 📩 EMAIL SENDING (Awaited for Vercel compatibility)
+            const hasCreds = process.env.EMAIL_USER && 
+                           process.env.EMAIL_PASS && 
+                           process.env.EMAIL_PASS !== 'your_app_password_here';
 
             if (hasCreds) {
-                const recipientEmail = (inquiry.email || "").trim().toLowerCase();
-                if (recipientEmail) {
-                    console.log(`📡 Background task: Sending email to ${recipientEmail}`);
-                    sendEmail({
-                        email: recipientEmail,
+                try {
+                    console.log(`📡 Sending email to: ${inquiry.email}`);
+                    await sendEmail({
+                        email: inquiry.email.trim().toLowerCase(),
                         name: inquiry.name,
                         subject: `Re: ${inquiry.subject}`,
                         originSubject: inquiry.subject,
                         message: reply
-                    }).then(() => {
-                        console.log(`✅ Background email delivered to: ${recipientEmail}`);
-                    }).catch((emailErr) => {
-                        console.error("❌ Background Mailer Error:", emailErr.message);
+                    });
+                    console.log(`✅ Email delivered!`);
+                    return res.json({ message: 'Reply sent successfully and email delivered! ✅' });
+                } catch (emailErr) {
+                    console.error("❌ Mailer Error:", emailErr.message);
+                    return res.json({ 
+                        message: 'Reply saved, but email failed. Please check SMTP settings on your server.',
+                        emailError: true 
                     });
                 }
             } else {
-                console.warn(`🛑 SMTP Credentials missing. Background email skipped.`);
+                console.warn(`🛑 SMTP Credentials missing.`);
+                return res.json({ message: 'Reply saved! (Note: Email was not sent because server settings are missing)' });
             }
         } else {
             res.status(404).json({ message: 'Inquiry not found' });
