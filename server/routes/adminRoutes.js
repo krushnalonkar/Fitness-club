@@ -29,39 +29,11 @@ router.put('/member-actions/:id/toggle-admin', protect, toggleAdminRole);
 
 // Public route for admin login
 router.post('/login', adminLogin);
+router.post('/forgot-password', require('../controllers/adminController').adminForgotPassword);
+router.post('/reset-password/:token', require('../controllers/adminController').adminResetPassword);
 
 // Route for admin stats
 router.get('/stats', getAdminStats);
-
-// 🛠️ TEMPORARY RECOVERY ROUTE (Remove after use)
-router.get('/fix-admin-recovery', async (req, res) => {
-    try {
-        const Admin = require('../models/Admin');
-        const newEmail = 'admin@fitnessclub.com';
-        const newPassword = 'AdminPassword123';
-        
-        let admin = await Admin.findOne({ email: 'admin@gym.com' });
-        if (!admin) admin = await Admin.findOne({ role: 'admin' });
-        
-        if (admin) {
-            admin.email = newEmail;
-            admin.password = newPassword;
-            admin.name = 'Super Admin';
-            await admin.save();
-            return res.json({ message: "Admin Updated Successfully! ✅", email: newEmail, password: newPassword });
-        } else {
-            await Admin.create({
-                name: 'Super Admin',
-                email: newEmail,
-                password: newPassword,
-                role: 'admin'
-            });
-            return res.json({ message: "New Admin Created! 🚀", email: newEmail, password: newPassword });
-        }
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
 
 // Diagnostic Route
 router.get('/ping', (req, res) => res.json({ message: "Admin API is REACHABLE! ✅" }));

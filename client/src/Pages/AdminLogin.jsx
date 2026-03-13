@@ -101,6 +101,12 @@ const AdminLogin = () => {
                         {loading ? 'Verifying...' : 'Access Dashboard'}
                     </button>
 
+                    <div className="text-right mt-2">
+                        <Link to="/admin/forgot-password" size="sm" className="text-gray-500 hover:text-purple text-[10px] font-black uppercase tracking-widest transition">
+                            Forgot Security Credentials?
+                        </Link>
+                    </div>
+
                     <p className="text-center text-xs text-gray-500 mt-4 italic">
                         * Unauthorized access is strictly prohibited.
                     </p>

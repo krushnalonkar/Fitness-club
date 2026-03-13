@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const Admin = require('../models/Admin');
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const Testimonial = require('../models/Testimonial');
 const Trainer = require('../models/Trainer');
@@ -206,6 +207,63 @@ const toggleAdminRole = async (req, res) => {
     }
 };
 
+const adminForgotPassword = async (req, res) => {
+    try {
+        const { email } = req.body;
+        const admin = await Admin.findOne({ email });
+
+        if (!admin) {
+            return res.status(404).json({ message: "Admin with this email does not exist" });
+        }
+
+        const resetToken = crypto.randomBytes(20).toString('hex');
+        admin.resetPasswordToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+        admin.resetPasswordExpire = Date.now() + 10 * 60 * 1000; // 10 minutes
+
+        await admin.save();
+
+        // 🛠️ DEV LOG (Since we might not have a configured email server)
+        console.log(`\n--- ADMIN PASSWORD RESET TOKEN ---`);
+        console.log(`Email: ${email}`);
+        console.log(`Token: ${resetToken}`);
+        console.log(`---------------------------------\n`);
+
+        res.json({ message: "Password reset token generated. Check terminal (Dev Mode)." });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const adminResetPassword = async (req, res) => {
+    try {
+        const { token } = req.params;
+        const { password } = req.body;
+
+        const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+        const admin = await Admin.findOne({
+            resetPasswordToken: hashedToken,
+            resetPasswordExpire: { $gt: Date.now() }
+        });
+
+        if (!admin) {
+            return res.status(400).json({ message: "Invalid or expired token" });
+        }
+
+        admin.password = password;
+        admin.resetPasswordToken = undefined;
+        admin.resetPasswordExpire = undefined;
+
+        await admin.save();
+
+        res.json({ message: "Password reset successful! You can now login with your new password." });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAdminStats,
     adminLogin,
@@ -213,5 +271,7 @@ module.exports = {
     updateUserProgressByAdmin,
     assignWorkoutByAdmin,
     assignSessionByAdmin,
-    toggleAdminRole
+    toggleAdminRole,
+    adminForgotPassword,
+    adminResetPassword
 };

@@ -63,34 +63,41 @@ function Hero() {
                                 className="w-full h-full object-cover"
                             />
 
-                            <div className="absolute inset-0 bg-black/40 flex flex-col justify-center items-center text-center px-4">
-                                <h1 className="text-3xl sm:text-4xl md:text-6xl font-bold text-white mb-4">
-                                    {user ? `Welcome Back, ${user.name.split(' ')[0]}!` : slide.title}
-                                </h1>
-                                <p className="text-white text-sm md:text-base max-w-xl mb-8">
-                                    {user ? "Ready to crush your goals today? Let's make every workout count and keep pushing forward." : slide.desc}
-                                </p>
-                                <div className="flex flex-col sm:flex-row gap-4 w-full sm:w-auto px-6 sm:px-0">
-                                    {user ? (
-                                        <>
-                                            <Link to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="w-full sm:w-auto px-8 py-3 bg-purple rounded-xl text-white font-semibold hover:bg-purple-700 transition duration-300 text-center">
-                                                Go to Dashboard
-                                            </Link>
-                                            <a href="#plans" className="w-full sm:w-auto px-8 py-3 border border-purple text-white rounded-xl font-semibold hover:bg-purple/20 transition duration-300 text-center">
-                                                Explore Plans
-                                            </a>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Link to="/signup" className="w-full sm:w-auto px-8 py-3 bg-purple rounded-xl text-white font-semibold hover:bg-purple-700 transition duration-300 text-center shadow-lg shadow-purple/20">
-                                                Join Now
-                                            </Link>
-                                            <Link to="/login" className="w-full sm:w-auto px-8 py-3 border border-purple/40 text-white rounded-xl font-semibold hover:bg-purple/10 transition duration-300 text-center backdrop-blur-sm">
-                                                Free Trial
-                                            </Link>
-                                        </>
-                                    )}
-                                </div>
+                            <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/40 to-black/80 flex flex-col justify-center items-center text-center px-6">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 30 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ duration: 0.8 }}
+                                    className="max-w-4xl"
+                                >
+                                    <h1 className="text-4xl sm:text-5xl md:text-8xl font-black text-white mb-6 uppercase tracking-tighter leading-none">
+                                        {user ? `Welcome, ${user.name.split(' ')[0]}!` : slide.title.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-purple">{word} </span> : word + ' ')}
+                                    </h1>
+                                    <p className="text-gray-300 text-sm md:text-xl max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
+                                        {user ? "Ready to crush your goals today? Let's make every workout count and keep pushing forward." : slide.desc}
+                                    </p>
+                                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
+                                        {user ? (
+                                            <>
+                                                <Link to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="w-full sm:w-auto px-10 py-4 bg-purple hover:bg-purple-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 shadow-2xl shadow-purple/40 text-xs">
+                                                    Go to Dashboard
+                                                </Link>
+                                                <a href="#plans" className="w-full sm:w-auto px-10 py-4 border border-white/20 hover:border-white/40 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 backdrop-blur-md text-xs">
+                                                    Explore Plans
+                                                </a>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <Link to="/signup" className="w-full sm:w-auto px-10 py-4 bg-purple hover:bg-purple-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 shadow-2xl shadow-purple/40 text-xs">
+                                                    Launch Transformation
+                                                </Link>
+                                                <Link to="/login" className="w-full sm:w-auto px-10 py-4 border border-white/20 hover:border-white/40 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 backdrop-blur-md text-xs">
+                                                    Client Portal
+                                                </Link>
+                                            </>
+                                        )}
+                                    </div>
+                                </motion.div>
                             </div>
                         </div>
                     </SwiperSlide>

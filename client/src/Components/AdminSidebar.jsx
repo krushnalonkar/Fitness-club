@@ -8,13 +8,13 @@ const AdminSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const menuItems = [
-        { name: 'Dashboard', path: '/admin/dashboard', icon: <FaChartPie /> },
-        { name: 'Manage Users', path: '/admin/users', icon: <FaUsers /> },
-        { name: 'Manage Trainers', path: '/admin/trainers', icon: <FaDumbbell /> },
-        { name: 'Gym Plans', path: '/admin/plans', icon: <FaClipboardList /> },
-        { name: 'Attendance', path: '/admin/attendance', icon: <FaUserCheck /> },
-        { name: 'Testimonials', path: '/admin/testimonials', icon: <FaCommentAlt /> },
-        { name: 'Inquiries', path: '/admin/inquiries', icon: <FaEnvelopeOpenText /> },
+        { name: 'Intelligence', path: '/admin/dashboard', icon: <FaChartPie /> },
+        { name: 'Unit Control', path: '/admin/users', icon: <FaUsers /> },
+        { name: 'Elite Assets', path: '/admin/trainers', icon: <FaDumbbell /> },
+        { name: 'Nexus Matrix', path: '/admin/plans', icon: <FaClipboardList /> },
+        { name: 'Bio-Log', path: '/admin/attendance', icon: <FaUserCheck /> },
+        { name: 'Public Intel', path: '/admin/testimonials', icon: <FaCommentAlt /> },
+        { name: 'Incoming Trans', path: '/admin/inquiries', icon: <FaEnvelopeOpenText /> },
     ];
 
     const toggleSidebar = () => setIsOpen(!isOpen);
@@ -22,17 +22,17 @@ const AdminSidebar = () => {
     const SidebarContent = () => (
         <div className="flex flex-col h-full pb-10">
             {/* Logo Section */}
-            <div className="py-8 px-4 flex items-center gap-3 border-b border-white/5 mb-6">
-                <div className="w-10 h-10 bg-purple rounded-xl flex items-center justify-center shadow-lg shadow-purple/30">
-                    <FaDumbbell className="text-white text-xl" />
+            <div className="py-10 px-4 flex items-center gap-4 border-b border-white/5 mb-8">
+                <div className="w-12 h-12 bg-linear-to-br from-purple to-purple-800 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-white/10 group-hover:rotate-6 transition-transform">
+                    <FaDumbbell className="text-white text-2xl" />
                 </div>
                 <div>
-                    <h2 className="text-white font-bold text-lg leading-tight tracking-tight">FITNESS<span className="text-purple">CLUB</span></h2>
-                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Administrator</p>
+                    <h2 className="text-white font-black text-xl leading-none tracking-tighter">NEXUS<span className="text-purple">CMD</span></h2>
+                    <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.3em] mt-1.5">Alpha Protocol</p>
                 </div>
             </div>
 
-            <div className="space-y-2 flex-1">
+            <div className="space-y-1.5 flex-1 px-2">
                 {menuItems.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
@@ -40,25 +40,35 @@ const AdminSidebar = () => {
                             key={item.name}
                             to={item.path}
                             onClick={() => setIsOpen(false)}
-                            className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${isActive
-                                ? 'bg-purple text-white shadow-xl shadow-purple/20'
-                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                            className={`flex items-center gap-4 px-6 py-4 rounded-[1.5rem] transition-all duration-500 relative group overflow-hidden ${isActive
+                                ? 'bg-purple/10 text-white border border-purple/20'
+                                : 'text-gray-500 hover:text-white hover:bg-white/5 border border-transparent'
                                 }`}
                         >
-                            <span className="text-xl">{item.icon}</span>
-                            <span className="font-bold text-[11px] uppercase tracking-[0.15em]">{item.name}</span>
+                            {isActive && (
+                                <motion.div 
+                                    layoutId="activeGlow"
+                                    className="absolute left-0 w-1.5 h-6 bg-purple rounded-full shadow-[0_0_15px_#8b5cf6]"
+                                />
+                            )}
+                            <span className={`text-lg transition-colors ${isActive ? 'text-purple' : 'group-hover:text-purple'}`}>{item.icon}</span>
+                            <span className="font-black text-[10px] uppercase tracking-[0.2em]">{item.name}</span>
+                            
+                            {isActive && (
+                                <div className="ml-auto w-1.5 h-1.5 bg-purple rounded-full animate-pulse shadow-[0_0_8px_#8b5cf6]"></div>
+                            )}
                         </Link>
                     );
                 })}
             </div>
 
-            <div className="mt-auto pt-6 border-t border-white/5">
+            <div className="mt-auto pt-8 border-t border-white/5 px-2">
                 <Link
                     to="/"
-                    className="flex items-center gap-4 px-4 py-3 text-red-400/70 hover:bg-red-500/10 hover:text-red-500 rounded-2xl transition-all duration-300"
+                    className="flex items-center gap-4 px-6 py-4 text-gray-600 hover:text-red-500 rounded-2xl transition-all duration-500 group"
                 >
-                    <FaSignOutAlt className="text-xl" />
-                    <span className="font-bold text-[11px] uppercase tracking-wider">Return Home</span>
+                    <FaSignOutAlt className="text-lg group-hover:-translate-x-1 transition-transform" />
+                    <span className="font-black text-[10px] uppercase tracking-[0.2em]">Terminate Uplink</span>
                 </Link>
             </div>
         </div>

@@ -56,40 +56,43 @@ function Services() {
         viewport={{ once: true }}
         className="text-center mb-16"
       >
-        <h2 className="text-3xl md:text-5xl font-bold">
-          Our <span className="text-purple-500">Services</span>
+        <p className="text-purple font-black uppercase tracking-[0.3em] text-[10px] mb-4">Elite Capabilities</p>
+        <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">
+          Our <span className="text-purple">Performance</span>
         </h2>
-        <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
-          We provide world-class fitness services to help you achieve your dream
-          physique and live a healthier lifestyle.
+        <p className="text-gray-500 mt-4 max-w-xl mx-auto text-sm font-bold uppercase tracking-widest leading-relaxed">
+          Shattering boundaries with world-class facilities and expert engineering.
         </p>
       </Motion.div>
-
+ 
       {/* Services Grid */}
-      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
         {services.map((service, index) => (
           <Motion.div
             key={index}
-            initial={{ opacity: 0, y: 60 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
+            transition={{ duration: 0.4, delay: index * 0.05 }}
             viewport={{ once: true }}
-            className="bg-dark-200 border border-dark-400 rounded-2xl p-8 
-                       hover:border-purple-500 hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]
-                       transition duration-300 group cursor-pointer"
+            className="bg-dark-200 border border-white/5 rounded-[2rem] p-10 
+                       hover:border-purple/30 hover:shadow-2xl hover:shadow-purple/10
+                       transition-all duration-500 group cursor-pointer relative overflow-hidden"
           >
+            {/* Decorative background element */}
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-purple/5 rounded-full blur-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+
             {/* Icon */}
-            <div className="text-purple-500 mb-6 group-hover:scale-110 transition duration-300">
+            <div className="w-16 h-16 bg-dark-300 rounded-2xl flex items-center justify-center text-purple mb-8 group-hover:bg-purple group-hover:text-white transition-all duration-500 transform group-hover:rotate-6 shadow-xl">
               {service.icon}
             </div>
-
+ 
             {/* Title */}
-            <h3 className="text-xl font-semibold mb-3">
+            <h3 className="text-xl font-black mb-4 uppercase tracking-tight text-white group-hover:text-purple transition-colors">
               {service.title}
             </h3>
-
+ 
             {/* Description */}
-            <p className="text-gray-400 text-sm leading-relaxed">
+            <p className="text-gray-500 text-xs font-bold uppercase tracking-widest leading-relaxed">
               {service.desc}
             </p>
           </Motion.div>

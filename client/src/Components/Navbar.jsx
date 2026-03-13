@@ -118,22 +118,14 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className='fixed w-full z-50 bg-dark-100/90 backdrop-blur-sm py-4 px-8 shadow-lg'>
-                <div className='container mx-auto flex justify-between item-center'>
-                    <div className="flex flex-col items-center">
+            <nav className='fixed w-full z-50 bg-dark-100/90 backdrop-blur-md py-4 px-4 md:px-8 shadow-2xl border-b border-white/5'>
+                <div className='container mx-auto flex justify-between items-center'>
+                    <div className="flex items-center gap-3">
                         {/* Text */}
-                        <Link to="/" className="text-3xl font-bold text-white hover:opacity-90">
-                            Fitness<span className="text-purple">Club</span>
+                        <Link to="/" className="text-2xl md:text-3xl font-bold text-white hover:opacity-90 transition-all flex items-center gap-2">
+                             <FaDumbbell className="text-purple text-2xl md:text-3xl" />
+                             <span>Fitness<span className="text-purple">Club</span></span>
                         </Link>
-
-                        {/* Dot + Dumbbell row */}
-                        <div className="flex justify-between items-center w-16 mt-1">
-                            {/* Left dot */}
-                            <div className="w-4 h-4 bg-purple rounded-full"></div>
-
-                            {/* Right dumbbell icon */}
-                            <FaDumbbell className="text-white text-2xl" />
-                        </div>
                     </div>
                     <div className='hidden md:flex items-center space-x-8'>
                         <Link to="/" onClick={() => window.scrollTo(0, 0)} className='relative text-white/80 transition duration-300 hover:text-purple group'>
@@ -284,7 +276,7 @@ const Navbar = () => {
                                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
                                 className='fixed top-0 right-0 w-[80%] max-w-sm h-screen bg-dark-100/95 backdrop-blur-xl z-[58] md:hidden border-l border-white/10 shadow-2xl overflow-y-auto pt-24 pb-10 px-6'
                             >
-                                <div className='flex flex-col space-y-2'>
+                                 <div className='flex flex-col space-y-1'>
                                     {[
                                         { name: 'Home', path: '/' },
                                         { name: 'About', path: '/#about' },
@@ -299,56 +291,59 @@ const Navbar = () => {
                                             key={link.name}
                                             onClick={() => { setShowMenu(false); if (link.name === 'Home') window.scrollTo(0, 0); }}
                                             to={link.path}
-                                            className='text-xl text-white/90 hover:text-purple py-3 border-b border-white/5 transition-colors'
+                                            className='text-lg font-bold text-white/90 hover:text-purple py-4 border-b border-white/5 transition-all flex items-center justify-between group'
                                         >
                                             {link.name}
+                                            <span className="w-1.5 h-1.5 bg-purple rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                                         </Link>
                                     ))}
-
-                                    <div className="pt-6 space-y-4">
+ 
+                                    <div className="pt-8 space-y-4">
                                         {user ? (
-                                            <div className="bg-dark-300/50 rounded-2xl p-4 border border-white/5">
-                                                <div className="flex items-center gap-3 mb-4">
-                                                    <FaUserCircle className="text-4xl text-purple" />
-                                                    <div className="text-left">
-                                                        <p className="text-white font-bold">{user.name}</p>
-                                                        <p className="text-xs text-gray-400 truncate w-32">{user.email}</p>
+                                            <div className="bg-dark-300/40 rounded-3xl p-5 border border-white/5 shadow-inner">
+                                                <div className="flex items-center gap-4 mb-6">
+                                                    <div className="w-12 h-12 bg-purple/10 border border-purple/30 rounded-2xl flex items-center justify-center">
+                                                        <FaUserCircle className="text-3xl text-purple" />
+                                                    </div>
+                                                    <div className="text-left w-full overflow-hidden">
+                                                        <p className="text-white font-black text-sm uppercase tracking-tight truncate">{user.name}</p>
+                                                        <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest truncate">{user.email}</p>
                                                     </div>
                                                 </div>
-                                                <div className="grid grid-cols-1 gap-2">
-                                                    <Link onClick={() => setShowMenu(false)} to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="w-full text-center py-2.5 bg-purple rounded-xl text-white font-semibold">
-                                                        Dashboard
+                                                <div className="grid grid-cols-1 gap-3">
+                                                    <Link onClick={() => setShowMenu(false)} to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="w-full text-center py-3.5 bg-purple hover:bg-purple-700 rounded-2xl text-white text-xs font-black uppercase tracking-widest transition shadow-lg shadow-purple/20">
+                                                        Go to Dashboard
                                                     </Link>
-                                                    <button onClick={() => { handleEditProfileClick(); setShowMenu(false); }} className="w-full py-2.5 bg-dark-400 rounded-xl text-gray-300 font-medium">
-                                                        Update Profile
+                                                    <button onClick={() => { handleEditProfileClick(); setShowMenu(false); }} className="w-full py-3.5 bg-dark-400 hover:bg-dark-500 rounded-2xl text-gray-300 text-[10px] font-black uppercase tracking-widest border border-white/5 transition">
+                                                        Setting
                                                     </button>
-                                                    <button onClick={() => { handleLogout(); setShowMenu(false); }} className="w-full py-2.5 text-red-500 font-semibold mt-2">
-                                                        Logout
+                                                    <button onClick={() => { handleLogout(); setShowMenu(false); }} className="w-full py-2.5 text-red-500 text-[10px] font-black uppercase tracking-[0.2em] mt-2 opacity-70 hover:opacity-100 transition">
+                                                        Logout System
                                                     </button>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col gap-4">
+                                            <div className="flex flex-col gap-3">
                                                 <Link
                                                     onClick={() => setShowMenu(false)}
                                                     to="/login"
-                                                    className="w-full py-3 bg-dark-400 text-white font-semibold rounded-2xl text-center border border-white/5"
+                                                    className="w-full py-4 bg-dark-300 text-white text-xs font-black uppercase tracking-widest rounded-2xl text-center border border-white/5 shadow-lg active:scale-95 transition"
                                                 >
-                                                    Login
+                                                    Login Account
                                                 </Link>
                                                 <Link
                                                     onClick={() => setShowMenu(false)}
                                                     to="/signup"
-                                                    className="w-full py-3 bg-purple text-white font-semibold rounded-2xl text-center shadow-lg shadow-purple/20"
+                                                    className="w-full py-4 bg-purple text-white text-xs font-black uppercase tracking-widest rounded-2xl text-center shadow-xl shadow-purple/20 active:scale-95 transition"
                                                 >
-                                                    Sign Up
+                                                    Create Account
                                                 </Link>
                                                 <Link
                                                     onClick={() => setShowMenu(false)}
                                                     to="/admin/login"
-                                                    className="flex items-center justify-center gap-2 text-purple-400 font-bold uppercase tracking-widest text-xs mt-4"
+                                                    className="flex items-center justify-center gap-2 text-purple-400 font-black uppercase tracking-[0.25em] text-[9px] mt-6 opacity-60 hover:opacity-100 transition"
                                                 >
-                                                    <FaUserShield /> Admin Access
+                                                    <FaUserShield size={12} /> Portal Access
                                                 </Link>
                                             </div>
                                         )}
