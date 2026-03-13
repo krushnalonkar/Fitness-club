@@ -266,7 +266,11 @@ const adminResetPassword = async (req, res) => {
 
 const updateAdminProfile = async (req, res) => {
     try {
-        const admin = await Admin.findById(req.user._id);
+        let admin = await Admin.findById(req.user._id);
+
+        if (!admin) {
+            admin = await User.findById(req.user._id);
+        }
 
         if (!admin) {
             return res.status(404).json({ message: 'Admin not found' });
