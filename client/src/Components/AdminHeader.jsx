@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaUserCircle, FaSignOutAlt, FaCog, FaBell, FaChartLine, FaUsers, FaClipboardList, FaCommentAlt, FaEnvelope, FaUserPlus, FaCalendarCheck } from 'react-icons/fa';
+import { FaXmark } from 'react-icons/fa6';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
@@ -12,7 +13,17 @@ const AdminHeader = () => {
     const notifRef = useRef(null);
     const navigate = useNavigate();
     const location = useLocation();
-    const userInfo = JSON.parse(localStorage.getItem('userInfo')) || { name: 'Admin Account' };
+    
+    const [userInfo, setUserInfo] = useState(JSON.parse(localStorage.getItem('userInfo')) || { name: 'Admin Account', email: 'admin@gym.com' });
+    const [showSettings, setShowSettings] = useState(false);
+    const [isUpdating, setIsUpdating] = useState(false);
+    const [updateStatus, setUpdateStatus] = useState({ type: '', message: '' });
+    const [formData, setFormData] = useState({ 
+        name: userInfo.name || '', 
+        email: userInfo.email || '', 
+        password: '', 
+        confirmPassword: '' 
+    });
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -86,6 +97,49 @@ const AdminHeader = () => {
         localStorage.removeItem('userInfo');
         localStorage.removeItem('token');
         navigate('/');
+    };
+
+    const handleSettingsClick = () => {
+        setFormData({ 
+            name: userInfo.name, 
+            email: userInfo.email, 
+            password: '', 
+            confirmPassword: '' 
+        });
+        setShowSettings(true);
+        setShowDropdown(false);
+        setUpdateStatus({ type: '', message: '' });
+    };
+
+    const handleUpdateProfile = async (e) => {
+        e.preventDefault();
+        if (formData.password && formData.password !== formData.confirmPassword) {
+            setUpdateStatus({ type: 'error', message: 'Passwords do not match!' });
+            return;
+        }
+
+        setIsUpdating(true);
+        setUpdateStatus({ type: '', message: '' });
+
+        try {
+            const token = userInfo.token || localStorage.getItem('token');
+            const res = await axios.put('/api/admin/profile', {
+                name: formData.name,
+                email: formData.email,
+                password: formData.password || undefined
+            }, {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+
+            localStorage.setItem('userInfo', JSON.stringify(res.data));
+            setUserInfo(res.data);
+            setUpdateStatus({ type: 'success', message: 'Profile updated successfully!' });
+            setTimeout(() => setShowSettings(false), 1500);
+        } catch (error) {
+            setUpdateStatus({ type: 'error', message: error.response?.data?.message || 'Update failed' });
+        } finally {
+            setIsUpdating(false);
+        }
     };
 
     const getIcon = (type) => {
@@ -228,7 +282,10 @@ const AdminHeader = () => {
                                     <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">Active Portal</p>
                                     <p className="text-xs font-semibold text-white truncate mt-0.5">{userInfo.email}</p>
                                 </div>
-                                <button className="w-full text-left px-5 py-2.5 text-gray-300 hover:bg-purple hover:text-white transition flex items-center gap-3 text-sm">
+                                <button 
+                                    onClick={handleSettingsClick}
+                                    className="w-full text-left px-5 py-2.5 text-gray-300 hover:bg-purple hover:text-white transition flex items-center gap-3 text-sm cursor-pointer"
+                                >
                                     <FaCog /> Settings
                                 </button>
                                 <button
@@ -242,6 +299,94 @@ const AdminHeader = () => {
                     </AnimatePresence>
                 </div>
             </div>
+
+            {/* Admin Settings Modal */}
+            <AnimatePresence>
+                {showSettings && (
+                    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-md p-4">
+                        <motion.div
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
+                            animate={{ opacity: 1, scale: 1, y: 0 }}
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="bg-dark-200 border border-dark-400 rounded-3xl p-8 max-w-md w-full shadow-2xl relative"
+                        >
+                            <button
+                                onClick={() => setShowSettings(false)}
+                                className="absolute top-6 right-6 text-gray-500 hover:text-white transition cursor-pointer"
+                            >
+                                <FaXmark size={20} />
+                            </button>
+
+                            <h2 className="text-xl font-bold text-white mb-2">Admin <span className="text-purple">Settings</span></h2>
+                            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-6 border-b border-dark-400 pb-4">Update your administrative profile</p>
+
+                            <form onSubmit={handleUpdateProfile} className="space-y-4">
+                                {updateStatus.message && (
+                                    <div className={`p-3 rounded-lg text-center text-xs font-bold uppercase ${updateStatus.type === 'success' ? 'bg-green-500/10 text-green-500' : 'bg-red-500/10 text-red-500'}`}>
+                                        {updateStatus.message}
+                                    </div>
+                                )}
+
+                                <div>
+                                    <label className="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Full Name</label>
+                                    <input
+                                        type="text"
+                                        value={formData.name}
+                                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                        className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition"
+                                        required
+                                    />
+                                </div>
+
+                                <div>
+                                    <label className="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Email Address</label>
+                                    <input
+                                        type="email"
+                                        value={formData.email}
+                                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                        className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition"
+                                        required
+                                    />
+                                </div>
+
+                                <div className="pt-2">
+                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-3">Security Change</p>
+                                    <div className="space-y-4">
+                                        <div>
+                                            <label className="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">New Password (optional)</label>
+                                            <input
+                                                type="password"
+                                                placeholder="Leave blank to keep current"
+                                                value={formData.password}
+                                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                                className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition"
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Confirm New Password</label>
+                                            <input
+                                                type="password"
+                                                placeholder="Confirm new password"
+                                                value={formData.confirmPassword}
+                                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                                className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <button
+                                    type="submit"
+                                    disabled={isUpdating}
+                                    className="w-full bg-purple hover:bg-purple-700 text-white py-4 rounded-xl font-bold text-xs uppercase tracking-widest transition shadow-lg shadow-purple/20 mt-6 disabled:opacity-50"
+                                >
+                                    {isUpdating ? 'Saving Changes...' : 'Update Administrative Profile'}
+                                </button>
+                            </form>
+                        </motion.div>
+                    </div>
+                )}
+            </AnimatePresence>
         </header>
     );
 };

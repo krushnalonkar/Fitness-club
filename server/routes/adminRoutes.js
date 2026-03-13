@@ -9,7 +9,8 @@ const {
     updateUserProgressByAdmin,
     assignWorkoutByAdmin,
     assignSessionByAdmin,
-    toggleAdminRole
+    toggleAdminRole,
+    updateAdminProfile
 } = require('../controllers/adminController');
 const { deleteUserPlan, cancelUserPlan } = require('../controllers/userController');
 const { protect } = require('../middleware/authMiddleware');
@@ -31,6 +32,9 @@ router.put('/member-actions/:id/toggle-admin', protect, toggleAdminRole);
 router.post('/login', adminLogin);
 router.post('/forgot-password', require('../controllers/adminController').adminForgotPassword);
 router.post('/reset-password/:token', require('../controllers/adminController').adminResetPassword);
+
+// Route for admin profile update
+router.put('/profile', protect, updateAdminProfile);
 
 // Route for admin stats
 router.get('/stats', getAdminStats);

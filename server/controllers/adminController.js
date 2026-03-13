@@ -264,6 +264,35 @@ const adminResetPassword = async (req, res) => {
     }
 };
 
+const updateAdminProfile = async (req, res) => {
+    try {
+        const admin = await Admin.findById(req.user._id);
+
+        if (!admin) {
+            return res.status(404).json({ message: 'Admin not found' });
+        }
+
+        admin.name = req.body.name || admin.name;
+        admin.email = req.body.email || admin.email;
+
+        if (req.body.password) {
+            admin.password = req.body.password;
+        }
+
+        const updatedAdmin = await admin.save();
+
+        res.json({
+            _id: updatedAdmin._id,
+            name: updatedAdmin.name,
+            email: updatedAdmin.email,
+            role: 'admin',
+            token: generateToken(updatedAdmin._id),
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 module.exports = {
     getAdminStats,
     adminLogin,
@@ -273,5 +302,6 @@ module.exports = {
     assignSessionByAdmin,
     toggleAdminRole,
     adminForgotPassword,
-    adminResetPassword
+    adminResetPassword,
+    updateAdminProfile
 };
