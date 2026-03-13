@@ -11,11 +11,6 @@ const ManageTestimonials = () => {
     const [message, setMessage] = useState('');
 
     useEffect(() => {
-        const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-        if (!userInfo || userInfo.role !== 'admin') {
-            window.location.href = '/admin/login';
-            return;
-        }
         fetchTestimonials();
     }, []);
 
@@ -31,7 +26,7 @@ const ManageTestimonials = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm("Delete this feedback? It will be removed from the public site.")) {
+        if (window.confirm("Delete this feedback?")) {
             try {
                 const userInfo = JSON.parse(localStorage.getItem('userInfo'));
                 await axios.delete(`/api/testimonials/${id}`, {
@@ -47,40 +42,29 @@ const ManageTestimonials = () => {
     };
 
     return (
-        <div className="flex bg-dark-100 min-h-screen">
+        <div className="flex bg-[#0a0a0a] min-h-screen">
             <AdminSidebar />
             <AdminHeader />
-            <div className="flex-1 lg:ml-72 pt-24 lg:pt-32 px-4 sm:px-10 pb-20 overflow-y-auto bg-dark-200">
-                <motion.div
-                    initial={{ opacity: 0, scale: 0.98 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    className="max-w-6xl mx-auto"
-                >
+            <div className="flex-1 lg:ml-72 pt-24 px-4 sm:px-8 pb-12 overflow-y-auto">
+                <div className="max-w-6xl mx-auto">
                     <div className="mb-10">
-                        <h1 className="text-2xl font-bold text-white tracking-tight">
-                            User <span className="text-purple">Feedback</span>
+                        <h1 className="text-3xl font-bold text-white">
+                            Member <span className="text-purple-600">Feedback</span>
                         </h1>
-                        <p className="text-gray-500 text-xs font-medium uppercase tracking-wider mt-1">Moderate and Manage Member Testimonials</p>
+                        <p className="text-gray-500 text-sm mt-1">Manage testimonials displayed on the website.</p>
                     </div>
 
                     {message && (
-                        <motion.div
-                            initial={{ opacity: 0, y: -20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="bg-red-500/10 border border-red-500/50 text-red-500 p-4 rounded-xl mb-8 text-center font-medium"
-                        >
+                        <div className="bg-red-600/10 border border-red-600/20 text-red-500 p-4 rounded-xl mb-8 text-center text-sm">
                             {message}
-                        </motion.div>
+                        </div>
                     )}
 
                     {loading ? (
-                        <div className="flex flex-col items-center justify-center h-64 text-gray-500 gap-3">
-                            <div className="w-10 h-10 border-4 border-purple border-t-transparent rounded-full animate-spin"></div>
-                            <p>Loading testimonials...</p>
-                        </div>
+                        <div className="text-center py-20 text-gray-500">Loading feedback...</div>
                     ) : testimonials.length === 0 ? (
-                        <div className="bg-dark-200 border border-dark-400 rounded-2xl p-20 text-center text-gray-500 italic">
-                            No active testimonials to show.
+                        <div className="bg-[#111] border border-white/10 rounded-xl p-20 text-center text-gray-500 italic">
+                            No feedback received yet.
                         </div>
                     ) : (
                         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -88,36 +72,32 @@ const ManageTestimonials = () => {
                                 {testimonials.map((entry) => (
                                     <motion.div
                                         key={entry._id}
-                                        layout
                                         initial={{ opacity: 0 }}
                                         animate={{ opacity: 1 }}
-                                        exit={{ opacity: 0, scale: 0.9 }}
-                                        className="bg-dark-200 border border-dark-400 p-6 rounded-2xl relative shadow-xl hover:border-purple/30 transition group cursor-pointer"
+                                        exit={{ opacity: 0 }}
+                                        className="bg-[#111] border border-white/10 p-6 rounded-xl relative shadow-xl"
                                     >
                                         <div className="flex justify-between items-start mb-4">
-                                            <div className="text-purple/40">
-                                                <FaQuoteLeft size={30} />
-                                            </div>
+                                            <FaQuoteLeft className="text-purple-600/30" size={24} />
                                             <button
                                                 onClick={() => handleDelete(entry._id)}
-                                                className="p-2 text-gray-500 hover:text-red-500 hover:bg-red-500/10 rounded-lg transition"
+                                                className="text-gray-500 hover:text-red-500 transition"
                                             >
-                                                <FaTrash size={16} />
+                                                <FaTrash size={14} />
                                             </button>
                                         </div>
 
-                                        <p className="text-gray-300 text-sm mb-6 leading-relaxed italic">"{entry.feedback}"</p>
+                                        <p className="text-gray-300 text-sm mb-6 italic leading-relaxed">"{entry.feedback}"</p>
 
-                                        <div className="flex items-center gap-3 border-t border-dark-400 pt-5">
-                                            <div className="p-2 bg-purple/10 rounded-full text-purple">
-                                                <FaUserCircle size={24} />
+                                        <div className="flex items-center gap-3 border-t border-white/5 pt-4">
+                                            <div className="w-10 h-10 bg-purple-600/10 rounded-full flex items-center justify-center text-purple-600">
+                                                <FaUserCircle size={20} />
                                             </div>
                                             <div>
                                                 <h4 className="text-white font-bold text-sm leading-none">{entry.name}</h4>
-                                                <p className="text-[10px] text-gray-500 mt-1">{entry.role}</p>
                                                 <div className="flex text-yellow-500 mt-1 gap-0.5">
                                                     {[...Array(entry.rating || 5)].map((_, i) => (
-                                                        <FaStar key={i} size={10} />
+                                                        <FaStar key={i} size={8} />
                                                     ))}
                                                 </div>
                                             </div>
@@ -127,7 +107,7 @@ const ManageTestimonials = () => {
                             </AnimatePresence>
                         </div>
                     )}
-                </motion.div>
+                </div>
             </div>
         </div>
     );

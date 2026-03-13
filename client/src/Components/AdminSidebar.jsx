@@ -8,31 +8,28 @@ const AdminSidebar = () => {
     const [isOpen, setIsOpen] = useState(false);
 
     const menuItems = [
-        { name: 'Intelligence', path: '/admin/dashboard', icon: <FaChartPie /> },
-        { name: 'Unit Control', path: '/admin/users', icon: <FaUsers /> },
-        { name: 'Elite Assets', path: '/admin/trainers', icon: <FaDumbbell /> },
-        { name: 'Nexus Matrix', path: '/admin/plans', icon: <FaClipboardList /> },
-        { name: 'Bio-Log', path: '/admin/attendance', icon: <FaUserCheck /> },
-        { name: 'Public Intel', path: '/admin/testimonials', icon: <FaCommentAlt /> },
-        { name: 'Incoming Trans', path: '/admin/inquiries', icon: <FaEnvelopeOpenText /> },
+        { name: 'Dashboard', path: '/admin/dashboard', icon: <FaChartPie /> },
+        { name: 'Members', path: '/admin/users', icon: <FaUsers /> },
+        { name: 'Trainers', path: '/admin/trainers', icon: <FaDumbbell /> },
+        { name: 'Gym Plans', path: '/admin/plans', icon: <FaClipboardList /> },
+        { name: 'Attendance', path: '/admin/attendance', icon: <FaUserCheck /> },
+        { name: 'Testimonials', path: '/admin/testimonials', icon: <FaCommentAlt /> },
+        { name: 'Inquiries', path: '/admin/inquiries', icon: <FaEnvelopeOpenText /> },
     ];
 
     const toggleSidebar = () => setIsOpen(!isOpen);
 
     const SidebarContent = () => (
-        <div className="flex flex-col h-full pb-10">
+        <div className="flex flex-col h-full">
             {/* Logo Section */}
-            <div className="py-10 px-4 flex items-center gap-4 border-b border-white/5 mb-8">
-                <div className="w-12 h-12 bg-linear-to-br from-purple to-purple-800 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-white/10 group-hover:rotate-6 transition-transform">
-                    <FaDumbbell className="text-white text-2xl" />
+            <div className="py-8 px-6 flex items-center gap-3 border-b border-white/10 mb-6">
+                <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center text-white">
+                    <FaDumbbell size={20} />
                 </div>
-                <div>
-                    <h2 className="text-white font-black text-xl leading-none tracking-tighter">NEXUS<span className="text-purple">CMD</span></h2>
-                    <p className="text-[9px] text-gray-600 font-black uppercase tracking-[0.3em] mt-1.5">Alpha Protocol</p>
-                </div>
+                <h2 className="text-white font-bold text-lg tracking-tight">GYM<span className="text-purple-600">PORTAL</span></h2>
             </div>
 
-            <div className="space-y-1.5 flex-1 px-2">
+            <div className="space-y-1 flex-1 px-3">
                 {menuItems.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
@@ -40,35 +37,25 @@ const AdminSidebar = () => {
                             key={item.name}
                             to={item.path}
                             onClick={() => setIsOpen(false)}
-                            className={`flex items-center gap-4 px-6 py-4 rounded-[1.5rem] transition-all duration-500 relative group overflow-hidden ${isActive
-                                ? 'bg-purple/10 text-white border border-purple/20'
-                                : 'text-gray-500 hover:text-white hover:bg-white/5 border border-transparent'
+                            className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${isActive
+                                ? 'bg-purple-600 text-white'
+                                : 'text-gray-400 hover:text-white hover:bg-white/5'
                                 }`}
                         >
-                            {isActive && (
-                                <motion.div 
-                                    layoutId="activeGlow"
-                                    className="absolute left-0 w-1.5 h-6 bg-purple rounded-full shadow-[0_0_15px_#8b5cf6]"
-                                />
-                            )}
-                            <span className={`text-lg transition-colors ${isActive ? 'text-purple' : 'group-hover:text-purple'}`}>{item.icon}</span>
-                            <span className="font-black text-[10px] uppercase tracking-[0.2em]">{item.name}</span>
-                            
-                            {isActive && (
-                                <div className="ml-auto w-1.5 h-1.5 bg-purple rounded-full animate-pulse shadow-[0_0_8px_#8b5cf6]"></div>
-                            )}
+                            <span className="text-lg">{item.icon}</span>
+                            <span className="font-semibold text-sm">{item.name}</span>
                         </Link>
                     );
                 })}
             </div>
 
-            <div className="mt-auto pt-8 border-t border-white/5 px-2">
+            <div className="mt-auto py-6 border-t border-white/10 px-3">
                 <Link
                     to="/"
-                    className="flex items-center gap-4 px-6 py-4 text-gray-600 hover:text-red-500 rounded-2xl transition-all duration-500 group"
+                    className="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-red-500 rounded-xl transition-all"
                 >
-                    <FaSignOutAlt className="text-lg group-hover:-translate-x-1 transition-transform" />
-                    <span className="font-black text-[10px] uppercase tracking-[0.2em]">Terminate Uplink</span>
+                    <FaSignOutAlt />
+                    <span className="font-semibold text-sm">Exit Admin</span>
                 </Link>
             </div>
         </div>
@@ -80,14 +67,14 @@ const AdminSidebar = () => {
             <div className="fixed top-6 left-6 z-[60] lg:hidden">
                 <button
                     onClick={toggleSidebar}
-                    className="p-3 bg-purple text-white rounded-xl shadow-xl shadow-purple/20 hover:scale-105 active:scale-95 transition-all"
+                    className="p-3 bg-purple-600 text-white rounded-xl shadow-lg"
                 >
                     {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
                 </button>
             </div>
 
             {/* Desktop Sidebar */}
-            <div className="hidden lg:block fixed left-0 top-0 h-screen w-72 bg-dark-100 border-r border-white/5 z-50 px-6">
+            <div className="hidden lg:block fixed left-0 top-0 h-screen w-72 bg-[#0a0a0a] border-r border-white/10 z-50">
                 <SidebarContent />
             </div>
 
@@ -100,14 +87,14 @@ const AdminSidebar = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={toggleSidebar}
-                            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[55] lg:hidden"
+                            className="fixed inset-0 bg-black/60 z-[55] lg:hidden"
                         />
                         <motion.div
                             initial={{ x: '-100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed left-0 top-0 h-screen w-72 bg-dark-100/95 backdrop-blur-xl z-[58] px-6 lg:hidden border-r border-white/5 shadow-2xl"
+                            className="fixed left-0 top-0 h-screen w-72 bg-[#0c0c0c] z-[58] lg:hidden border-r border-white/10 shadow-2xl"
                         >
                             <SidebarContent />
                         </motion.div>

@@ -53,7 +53,7 @@ function Hero() {
                         swiper.params.navigation.nextEl = nextRef.current;
                     }
                 }}
-                className="h-screen"  // 🔥 Height increased from 80vh to 90vh
+                className="h-[80vh]"
             >
                 {slides.map((slide, index) => (
                     <SwiperSlide key={index}>
@@ -64,36 +64,36 @@ function Hero() {
                                 className="w-full h-full object-cover"
                             />
 
-                            <div className="absolute inset-0 bg-linear-to-b from-black/20 via-black/40 to-black/80 flex flex-col justify-center items-center text-center px-6">
+                            <div className="absolute inset-0 bg-black/50 flex flex-col justify-center items-center text-center px-4">
                                 <motion.div
                                     initial={{ opacity: 0, y: 30 }}
                                     animate={{ opacity: 1, y: 0 }}
                                     transition={{ duration: 0.8 }}
-                                    className="max-w-4xl"
+                                    className="max-w-2xl px-4"
                                 >
-                                    <h1 className="text-4xl sm:text-5xl md:text-8xl font-black text-white mb-6 uppercase tracking-tighter leading-none">
-                                        {user ? `Welcome, ${user.name.split(' ')[0]}!` : slide.title.split(' ').map((word, i) => i === 1 ? <span key={i} className="text-purple">{word} </span> : word + ' ')}
+                                    <h1 className="text-3xl md:text-5xl font-bold text-white mb-4">
+                                        {user ? `Welcome, ${user.name.split(' ')[0]}!` : slide.title}
                                     </h1>
-                                    <p className="text-gray-300 text-sm md:text-xl max-w-2xl mx-auto mb-10 font-medium leading-relaxed">
-                                        {user ? "Ready to crush your goals today? Let's make every workout count and keep pushing forward." : slide.desc}
+                                    <p className="text-gray-300 text-sm md:text-lg mb-8">
+                                        {user ? "Ready to crush your goals today? Let's make every workout count." : slide.desc}
                                     </p>
-                                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center w-full sm:w-auto">
+                                    <div className="flex flex-wrap gap-4 justify-center">
                                         {user ? (
                                             <>
-                                                <Link to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="w-full sm:w-auto px-10 py-4 bg-purple hover:bg-purple-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 shadow-2xl shadow-purple/40 text-xs">
+                                                <Link to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition text-sm">
                                                     Go to Dashboard
                                                 </Link>
-                                                <a href="#plans" className="w-full sm:w-auto px-10 py-4 border border-white/20 hover:border-white/40 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 backdrop-blur-md text-xs">
+                                                <a href="#plans" className="px-6 py-3 border border-white hover:bg-white hover:text-black text-white font-bold rounded-lg transition text-sm">
                                                     Explore Plans
                                                 </a>
                                             </>
                                         ) : (
                                             <>
-                                                <Link to="/signup" className="w-full sm:w-auto px-10 py-4 bg-purple hover:bg-purple-700 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 shadow-2xl shadow-purple/40 text-xs">
-                                                    Launch Transformation
+                                                <Link to="/signup" className="px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition text-sm">
+                                                    Get Started
                                                 </Link>
-                                                <Link to="/login" className="w-full sm:w-auto px-10 py-4 border border-white/20 hover:border-white/40 text-white font-black uppercase tracking-widest rounded-2xl transition-all active:scale-95 backdrop-blur-md text-xs">
-                                                    Client Portal
+                                                <Link to="/login" className="px-6 py-3 border border-white hover:bg-white hover:text-black text-white font-bold rounded-lg transition text-sm">
+                                                    Login
                                                 </Link>
                                             </>
                                         )}

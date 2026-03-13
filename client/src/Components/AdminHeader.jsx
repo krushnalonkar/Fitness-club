@@ -26,10 +26,8 @@ const AdminHeader = () => {
         document.addEventListener("mousedown", handleClickOutside);
         fetchNotifications();
 
-        // Poll for new notifications every 30 seconds
         const interval = setInterval(fetchNotifications, 30000);
 
-        // Listen for refresh events from other components
         const handleRefresh = () => fetchNotifications();
         window.addEventListener('refreshNotifications', handleRefresh);
 
@@ -55,14 +53,11 @@ const AdminHeader = () => {
 
     const markRead = async (id) => {
         try {
-            // Instant UI update: Remove from local state immediately
             setNotifications(prev => prev.filter(n => n._id !== id));
-
             const user = JSON.parse(localStorage.getItem('userInfo'));
             await axios.put(`/api/notifications/${id}`, {}, {
                 headers: { Authorization: `Bearer ${user.token}` }
             });
-            // fetchNotifications(); // Optional: re-fetch to stay in sync
         } catch (error) {
             console.error("Mark Read Error:", error);
         }
@@ -70,9 +65,7 @@ const AdminHeader = () => {
 
     const markAllRead = async () => {
         try {
-            // Instant UI update: Clear all locally
             setNotifications([]);
-
             const user = JSON.parse(localStorage.getItem('userInfo'));
             await axios.put(`/api/notifications/mark-all-read`, {}, {
                 headers: { Authorization: `Bearer ${user.token}` }
@@ -90,58 +83,33 @@ const AdminHeader = () => {
 
     const getIcon = (type) => {
         switch (type) {
-            case 'user': return <FaUserPlus className="text-blue-400" />;
-            case 'inquiry': return <FaEnvelope className="text-purple" />;
-            case 'booking': return <FaCalendarCheck className="text-green-400" />;
+            case 'user': return <FaUserPlus className="text-blue-500" />;
+            case 'inquiry': return <FaEnvelope className="text-purple-600" />;
+            case 'booking': return <FaCalendarCheck className="text-green-500" />;
             default: return <FaBell className="text-gray-400" />;
         }
     };
 
     const unreadCount = notifications.length;
 
-    const navLinks = [
-        { name: 'Dashboard', path: '/admin/dashboard', icon: <FaChartLine /> },
-        { name: 'Members', path: '/admin/users', icon: <FaUsers /> },
-        { name: 'Gym Plans', path: '/admin/plans', icon: <FaClipboardList /> },
-        { name: 'Feedback', path: '/admin/testimonials', icon: <FaCommentAlt /> },
-    ];
-
     return (
-        <header className="fixed top-0 right-0 lg:left-72 left-0 h-20 bg-dark-100/95 backdrop-blur-md border-b border-white/5 z-40 flex items-center justify-between px-4 sm:px-8">
-            {/* Navigation Tabs - Hidden on small mobile, scrollable on tablet */}
-            <div className="hidden sm:flex items-center gap-2 overflow-x-auto no-scrollbar max-w-[50%] lg:max-w-none">
-                {navLinks.map((link) => {
-                    const isActive = location.pathname === link.path;
-                    return (
-                        <Link
-                            key={link.name}
-                            to={link.path}
-                            className={`flex items-center gap-2 px-3 lg:px-4 py-2 rounded-xl text-xs font-bold transition-all duration-300 whitespace-nowrap ${isActive
-                                ? 'bg-purple text-white shadow-lg shadow-purple/20'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
-                                }`}
-                        >
-                            <span>{link.icon}</span>
-                            <span className="hidden lg:inline uppercase tracking-wider">{link.name}</span>
-                        </Link>
-                    );
-                })}
+        <header className="fixed top-0 right-0 lg:left-72 left-0 h-16 bg-[#0c0c0c] border-b border-white/10 z-40 flex items-center justify-between px-6">
+            <div className="flex items-center gap-4">
+                <h1 className="text-white font-bold text-sm hidden sm:block uppercase tracking-wider">
+                    {location.pathname.split('/').pop()}
+                </h1>
             </div>
 
-            {/* Placeholder for spacing on mobile when nav is hidden */}
-            <div className="sm:hidden w-12"></div>
-
-            {/* Admin Profile & Notifications */}
-            <div className="flex items-center gap-3 lg:gap-6">
-                {/* Notifications Bell */}
+            <div className="flex items-center gap-4">
+                {/* Notifications */}
                 <div className="relative" ref={notifRef}>
                     <button
                         onClick={() => setShowNotifications(!showNotifications)}
-                        className={`p-2.5 rounded-xl transition relative cursor-pointer ${showNotifications ? 'bg-purple/10 text-purple' : 'text-gray-400 hover:text-purple hover:bg-white/5'}`}
+                        className="p-2 text-gray-400 hover:text-white transition relative"
                     >
-                        <FaBell size={18} />
+                        <FaBell size={20} />
                         {unreadCount > 0 && (
-                            <span className="absolute top-2 right-2 w-3.5 h-3.5 bg-red-500 text-white text-[8px] font-black flex items-center justify-center rounded-full border-2 border-dark-100">
+                            <span className="absolute top-1 right-1 w-4 h-4 bg-red-600 text-white text-[10px] font-bold flex items-center justify-center rounded-full">
                                 {unreadCount}
                             </span>
                         )}
@@ -150,69 +118,53 @@ const AdminHeader = () => {
                     <AnimatePresence>
                         {showNotifications && (
                             <motion.div
-                                initial={{ opacity: 0, y: 10, scale: 0.95 }}
-                                animate={{ opacity: 1, y: 0, scale: 1 }}
-                                exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                className="absolute right-0 mt-4 w-80 bg-dark-200/95 backdrop-blur-xl border border-dark-400 rounded-3xl shadow-2xl py-4 z-50 overflow-hidden"
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: 10 }}
+                                className="absolute right-0 mt-2 w-72 bg-[#151515] border border-white/10 rounded-xl shadow-2xl py-2 z-50 overflow-hidden"
                             >
-                                <div className="px-6 pb-4 border-b border-dark-400 flex justify-between items-center">
-                                    <h3 className="text-white text-xs font-bold uppercase tracking-widest">Notifications</h3>
-                                    <div className="flex items-center gap-3">
-                                        <button
-                                            onClick={markAllRead}
-                                            className="text-[9px] text-gray-500 hover:text-purple font-black uppercase tracking-widest transition cursor-pointer"
-                                        >
-                                            Mark all
-                                        </button>
-                                        <span className="text-[10px] text-purple font-bold px-2 py-0.5 bg-purple/10 rounded-full">{unreadCount} New</span>
-                                    </div>
+                                <div className="px-4 py-2 border-b border-white/10 flex justify-between items-center bg-white/5">
+                                    <span className="text-white text-xs font-bold">Notifications</span>
+                                    <button onClick={markAllRead} className="text-[10px] text-purple-400 font-bold hover:underline">Clear all</button>
                                 </div>
-
-                                <div className="max-h-[350px] overflow-y-auto custom-scrollbar">
+                                <div className="max-h-80 overflow-y-auto">
                                     {notifications.length === 0 ? (
-                                        <div className="p-10 text-center text-gray-500 text-xs">No updates yet.</div>
+                                        <div className="p-8 text-center text-gray-500 text-xs">No notifications</div>
                                     ) : (
                                         notifications.map((n) => (
                                             <div
                                                 key={n._id}
-                                                onClick={() => !n.isRead && markRead(n._id)}
-                                                className={`px-6 py-4 border-b border-dark-400/50 hover:bg-dark-300 transition cursor-pointer relative ${!n.isRead ? 'bg-purple/5' : 'opacity-60'}`}
+                                                onClick={() => markRead(n._id)}
+                                                className="px-4 py-3 border-b border-white/5 hover:bg-white/5 transition cursor-pointer"
                                             >
-                                                <div className="flex gap-4">
-                                                    <div className="mt-1 text-base">{getIcon(n.type)}</div>
+                                                <div className="flex gap-3">
+                                                    <div className="mt-1">{getIcon(n.type)}</div>
                                                     <div>
-                                                        <p className="text-sm text-white leading-relaxed font-bold">{n.message}</p>
-                                                        <p className="text-[9px] text-gray-500 font-bold uppercase mt-1">
-                                                            {new Date(n.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                                        </p>
+                                                        <p className="text-xs text-white leading-snug">{n.message}</p>
+                                                        <p className="text-[10px] text-gray-500 mt-1">{new Date(n.createdAt).toLocaleTimeString()}</p>
                                                     </div>
                                                 </div>
-                                                {!n.isRead && (
-                                                    <div className="absolute right-4 top-1/2 -translate-y-1/2 w-1.5 h-1.5 bg-purple rounded-full"></div>
-                                                )}
                                             </div>
                                         ))
                                     )}
-                                </div>
-                                <div className="px-6 pt-4 text-center">
-                                    <p className="text-[9px] text-gray-500 font-bold uppercase tracking-widest">Stay updated with latest activity</p>
                                 </div>
                             </motion.div>
                         )}
                     </AnimatePresence>
                 </div>
 
+                {/* Profile */}
                 <div className="relative" ref={dropdownRef}>
                     <button
                         onClick={() => setShowDropdown(!showDropdown)}
-                        className="flex items-center gap-3 pl-4 border-l border-dark-400 cursor-pointer"
+                        className="flex items-center gap-2 pl-4 border-l border-white/10"
                     >
-                        <div className="text-right hidden md:flex flex-col">
-                            <span className="text-white text-xs font-bold leading-tight">{userInfo.name}</span>
-                            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-widest mt-0.5">Administrator</span>
+                        <div className="hidden md:block text-right">
+                            <p className="text-white text-xs font-bold leading-none">{userInfo.name}</p>
+                            <p className="text-[10px] text-gray-500 mt-1 uppercase">Admin</p>
                         </div>
-                        <div className="w-10 h-10 bg-purple/10 border border-purple/30 rounded-xl flex items-center justify-center text-purple hover:bg-purple hover:text-white transition">
-                            <FaUserCircle size={22} />
+                        <div className="w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center text-purple-600">
+                            <FaUserCircle size={24} />
                         </div>
                     </button>
 
@@ -222,18 +174,18 @@ const AdminHeader = () => {
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: 10 }}
-                                className="absolute right-0 mt-4 w-56 bg-dark-200 border border-dark-400 rounded-2xl shadow-2xl py-2 overflow-hidden"
+                                className="absolute right-0 mt-2 w-48 bg-[#151515] border border-white/10 rounded-xl shadow-2xl py-1 overflow-hidden"
                             >
-                                <div className="px-5 py-3 border-b border-dark-400 mb-1">
-                                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-tight">Active Portal</p>
-                                    <p className="text-xs font-semibold text-white truncate mt-0.5">{userInfo.email}</p>
+                                <div className="px-4 py-2 border-b border-white/10 bg-white/5">
+                                    <p className="text-[10px] text-gray-500 uppercase">Administrator</p>
+                                    <p className="text-xs font-bold text-white truncate">{userInfo.email}</p>
                                 </div>
-                                <button className="w-full text-left px-5 py-2.5 text-gray-300 hover:bg-purple hover:text-white transition flex items-center gap-3 text-sm">
+                                <button className="w-full text-left px-4 py-2 text-gray-300 hover:bg-purple-600 hover:text-white transition text-xs flex items-center gap-2">
                                     <FaCog /> Settings
                                 </button>
                                 <button
                                     onClick={handleLogout}
-                                    className="w-full text-left px-5 py-2.5 text-red-500 hover:bg-red-500/10 transition flex items-center gap-3 text-sm border-t border-dark-400 mt-1"
+                                    className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-500 hover:text-white transition text-xs flex items-center gap-2 border-t border-white/10 mt-1"
                                 >
                                     <FaSignOutAlt /> Logout
                                 </button>
