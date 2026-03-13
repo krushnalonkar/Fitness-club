@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaUserCircle, FaSignOutAlt, FaCog, FaBell, FaChartLine, FaUsers, FaClipboardList, FaCommentAlt, FaEnvelope, FaUserPlus, FaCalendarCheck } from 'react-icons/fa';
+import { FaUserCircle, FaSignOutAlt, FaCog, FaBell, FaChartLine, FaUsers, FaClipboardList, FaCommentAlt, FaEnvelope, FaUserPlus, FaCalendarCheck, FaEye, FaEyeSlash } from 'react-icons/fa';
 import { FaXmark } from 'react-icons/fa6';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -18,6 +18,8 @@ const AdminHeader = () => {
     const [showSettings, setShowSettings] = useState(false);
     const [isUpdating, setIsUpdating] = useState(false);
     const [updateStatus, setUpdateStatus] = useState({ type: '', message: '' });
+    const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [formData, setFormData] = useState({ 
         name: userInfo.name || '', 
         email: userInfo.email || '', 
@@ -356,23 +358,41 @@ const AdminHeader = () => {
                                     <div className="space-y-4">
                                         <div>
                                             <label className="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">New Password (optional)</label>
-                                            <input
-                                                type="password"
-                                                placeholder="Leave blank to keep current"
-                                                value={formData.password}
-                                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                                                className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition"
-                                            />
+                                            <div className="relative">
+                                                <input
+                                                    type={showPassword ? "text" : "password"}
+                                                    placeholder="Leave blank to keep current"
+                                                    value={formData.password}
+                                                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                                    className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition pr-12"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowPassword(!showPassword)}
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition cursor-pointer"
+                                                >
+                                                    {showPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                                                </button>
+                                            </div>
                                         </div>
                                         <div>
                                             <label className="block text-gray-400 text-[10px] font-bold uppercase tracking-widest mb-1">Confirm New Password</label>
-                                            <input
-                                                type="password"
-                                                placeholder="Confirm new password"
-                                                value={formData.confirmPassword}
-                                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                                                className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition"
-                                            />
+                                            <div className="relative">
+                                                <input
+                                                    type={showConfirmPassword ? "text" : "password"}
+                                                    placeholder="Confirm new password"
+                                                    value={formData.confirmPassword}
+                                                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                                    className="w-full bg-dark-300 border border-dark-400 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-purple transition pr-12"
+                                                />
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-500 hover:text-white transition cursor-pointer"
+                                                >
+                                                    {showConfirmPassword ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
