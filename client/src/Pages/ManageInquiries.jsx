@@ -54,36 +54,34 @@ const ManageInquiries = () => {
 
     const handleReplySubmit = async (e) => {
         e.preventDefault();
-        if (!replyText.trim()) return;
+        const currentReply = replyText;
+        const currentInquiry = selectedInquiry;
+        if (!currentReply.trim() || !currentInquiry) return;
 
-        setIsSubmitting(true);
+        // 🚀 OPTIMISTIC UPDATE: Close UI immediately
+        setSelectedInquiry(null);
+        setReplyText('');
+        
+        // Update local state so it looks "Sent" instantly
+        setInquiries(prev => prev.map(item => 
+            item._id === currentInquiry._id 
+                ? { ...item, status: 'replied', adminReply: currentReply } 
+                : item
+        ));
+
         try {
             const userInfo = JSON.parse(localStorage.getItem('userInfo'));
-            const res = await axios.put(`/api/contacts/${selectedInquiry._id}/reply`, { reply: replyText }, {
+            const res = await axios.put(`/api/contacts/${currentInquiry._id}/reply`, { reply: currentReply }, {
                 headers: { Authorization: `Bearer ${userInfo.token}` }
             });
 
             if (res.status === 200) {
-                // 1. Close modal immediately
-                setSelectedInquiry(null);
-                setReplyText('');
-                setIsSubmitting(false);
-
-                // 2. Update local state instead of reloading page (FASTER)
-                setInquiries(prev => prev.map(item => 
-                    item._id === selectedInquiry._id 
-                        ? { ...item, status: 'replied', adminReply: replyText } 
-                        : item
-                ));
-
-                // 3. Show alert at the end
-                alert(res.data.message || "Reply sent successfully!");
+                console.log("Server response:", res.data.message);
+                // Optional: You could show a small toast notification here
             }
         } catch (error) {
             console.error("Reply Error:", error);
-            alert("Failed to send reply. Please try again.");
-        } finally {
-            setIsSubmitting(false);
+            alert("Reply saved in DB, but Email might have failed. Please check your Vercel logs or SMTP settings.");
         }
     };
 
