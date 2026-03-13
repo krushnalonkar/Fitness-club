@@ -161,7 +161,8 @@ const AdminHeader = () => {
     ];
 
     return (
-        <header className="fixed top-0 right-0 lg:left-72 left-0 h-20 bg-dark-100/95 backdrop-blur-md border-b border-white/5 z-40 flex items-center justify-between px-4 sm:px-8">
+        <>
+            <header className="fixed top-0 right-0 lg:left-72 left-0 h-20 bg-dark-100/95 backdrop-blur-md border-b border-white/5 z-40 flex items-center justify-between px-4 sm:px-8">
             {/* Navigation Tabs - Hidden on small mobile, scrollable on tablet */}
             <div className="hidden sm:flex items-center gap-2 overflow-x-auto no-scrollbar max-w-[50%] lg:max-w-none">
                 {navLinks.map((link) => {
@@ -298,29 +299,28 @@ const AdminHeader = () => {
                         )}
                     </AnimatePresence>
                 </div>
-            </div>
+                </div>
+            </header>
 
-            {/* Admin Settings Modal */}
+            {/* Admin Settings Modal - Moved outside header for proper stacking */}
             <AnimatePresence>
                 {showSettings && (
-                    <div className="fixed inset-0 z-[100] flex items-start justify-center overflow-y-auto bg-black/90 backdrop-blur-sm p-4 py-10 lg:py-20 custom-scrollbar">
+                    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/80 backdrop-blur-md p-4 overflow-y-auto">
                         <motion.div
-                            initial={{ opacity: 0, scale: 0.95, y: -20 }}
+                            initial={{ opacity: 0, scale: 0.9, y: 20 }}
                             animate={{ opacity: 1, scale: 1, y: 0 }}
-                            exit={{ opacity: 0, scale: 0.95, y: -20 }}
-                            className="bg-dark-200 border border-dark-400 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative my-auto"
+                            exit={{ opacity: 0, scale: 0.9, y: 20 }}
+                            className="bg-dark-200 border border-dark-400 rounded-3xl p-8 max-w-md w-full shadow-2xl relative my-auto mx-auto"
                         >
                             <button
                                 onClick={() => setShowSettings(false)}
-                                className="absolute top-5 right-5 text-gray-400 hover:text-white transition cursor-pointer p-1"
+                                className="absolute top-6 right-6 text-gray-400 hover:text-white transition cursor-pointer"
                             >
                                 <FaXmark size={20} />
                             </button>
 
-                            <div className="mb-6">
-                                <h2 className="text-xl font-bold text-white mb-1">Admin <span className="text-purple">Settings</span></h2>
-                                <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest border-b border-dark-400 pb-3">Security & Account Configuration</p>
-                            </div>
+                            <h2 className="text-xl font-bold text-white mb-2">Admin <span className="text-purple">Settings</span></h2>
+                            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-6 border-b border-dark-400 pb-4">Update your administrative profile</p>
 
                             <form onSubmit={handleUpdateProfile} className="space-y-4">
                                 {updateStatus.message && (
@@ -389,7 +389,7 @@ const AdminHeader = () => {
                     </div>
                 )}
             </AnimatePresence>
-        </header>
+        </>
     );
 };
 
