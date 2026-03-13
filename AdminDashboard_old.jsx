@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { FaUserPlus, FaLayerGroup, FaTimes, FaUser, FaEnvelope, FaLock, FaEye, FaEyeSlash, FaChartLine, FaUsers, FaDumbbell, FaEnvelopeOpenText } from 'react-icons/fa';
@@ -28,7 +28,7 @@ const AdminDashboard = () => {
 
     useEffect(() => {
         fetchStats();
-        // 💡 Polling: Update stats every 30 seconds to show "Live" counts
+        // ≡ƒÆí Polling: Update stats every 30 seconds to show "Live" counts
         const interval = setInterval(fetchStats, 30000);
 
         // Listen for refresh events from other components
@@ -135,7 +135,7 @@ const AdminDashboard = () => {
                             <div className="absolute top-0 right-0 p-4 text-green-500/20 group-hover:text-green-500/40 transition">
                                 <FaChartLine size={40} />
                             </div>
-                            <h3 className="text-2xl font-black text-white mb-1 group-hover:text-green-400 transition">₹{loading ? '...' : stats.totalRevenue.toLocaleString()}</h3>
+                            <h3 className="text-2xl font-black text-white mb-1 group-hover:text-green-400 transition">Γé╣{loading ? '...' : stats.totalRevenue.toLocaleString()}</h3>
                             <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest">Growth Revenue</p>
                         </motion.div>
 
@@ -171,7 +171,7 @@ const AdminDashboard = () => {
                                     Real-Time <span className="text-purple">Revenue Growth</span>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <span className="text-[10px] text-white font-bold px-3 py-1 bg-purple/20 rounded-lg border border-purple/30">Total: ₹{stats.totalRevenue.toLocaleString()}</span>
+                                    <span className="text-[10px] text-white font-bold px-3 py-1 bg-purple/20 rounded-lg border border-purple/30">Total: Γé╣{stats.totalRevenue.toLocaleString()}</span>
                                     <span className="text-[10px] text-gray-500 font-bold uppercase tracking-widest bg-dark-300 px-3 py-1 rounded-full border border-dark-400">Last 6 Months</span>
                                 </div>
                             </h3>
@@ -201,7 +201,7 @@ const AdminDashboard = () => {
                                         >
                                             {/* Tooltip */}
                                             <div className="absolute -top-12 left-1/2 -translate-x-1/2 bg-white text-dark-100 text-[10px] font-black px-3 py-1.5 rounded-lg opacity-0 group-hover/bar:opacity-100 transition-all duration-300 whitespace-nowrap z-30 shadow-2xl pointer-events-none scale-90 group-hover/bar:scale-100">
-                                                ₹{item.revenue.toLocaleString()}
+                                                Γé╣{item.revenue.toLocaleString()}
                                                 <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 bg-white rotate-45"></div>
                                             </div>
 

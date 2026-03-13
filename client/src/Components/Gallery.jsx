@@ -65,17 +65,17 @@ function Gallery() {
         viewport={{ once: true }}
         className="text-center mb-14"
       >
-        <p className="text-purple font-black uppercase tracking-[0.3em] text-[10px] mb-4">Visual Excellence</p>
-        <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">
-          The <span className="text-purple">Aesthetics</span>
+        <h2 className="text-3xl md:text-4xl font-bold">
+          Our <span className="text-purple-500">Gym Gallery</span>
         </h2>
-        <p className="text-gray-500 mt-4 max-w-xl mx-auto text-sm font-bold uppercase tracking-widest leading-relaxed">
-          Premium atmosphere engineered for peak human performance.
+        <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+          Explore our gym interior, equipment, trainers, workout sessions and
+          real member transformations.
         </p>
       </Motion.div>
- 
+
       {/* 🏷️ Category Filters */}
-      <div className="flex flex-wrap justify-center gap-2 mb-12 max-w-4xl mx-auto">
+      <div className="flex flex-wrap justify-center gap-3 mb-12">
         {categories.map((cat, index) => (
           <button
             key={index}
@@ -83,59 +83,58 @@ function Gallery() {
               setActiveCategory(cat);
               setShowAll(false); // reset when category changes
             }}
-            className={`px-6 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all duration-500 active:scale-95
+            className={`px-5 py-2 rounded-full text-sm font-medium transition-all duration-300
               ${
                 activeCategory === cat
-                  ? "bg-purple text-white shadow-xl shadow-purple/30"
-                  : "bg-dark-200 text-gray-500 border border-white/5 hover:border-purple/30 hover:text-white"
+                  ? "bg-purple-600 text-white shadow-lg"
+                  : "bg-dark-300 text-gray-300 border border-dark-400 hover:border-purple-500 hover:text-white"
               }`}
           >
             {cat}
           </button>
         ))}
       </div>
- 
+
       {/* 🖼️ Gallery Grid */}
-      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+      <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
         {filteredImages.map((item, index) => (
           <Motion.div
             key={item.id}
-            initial={{ opacity: 0, scale: 0.95 }}
+            initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.4, delay: index * 0.05 }}
             viewport={{ once: true }}
-            className="group relative overflow-hidden rounded-3xl
-            border border-white/5 hover:border-purple/30
-            cursor-pointer aspect-square"
+            className="group relative overflow-hidden rounded-2xl
+            border border-dark-400 hover:border-purple-500
+            cursor-pointer"
           >
             <img
               src={item.image}
               alt={item.category}
-              className="w-full h-full object-cover object-center
-              group-hover:scale-110 transition-transform duration-1000 filter grayscale group-hover:grayscale-0"
+              className="w-full h-64 object-cover object-center
+              group-hover:scale-110 transition-transform duration-500"
             />
- 
-            <div className="absolute inset-0 bg-linear-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 flex items-end">
-              <div className="p-6 w-full translate-y-4 group-hover:translate-y-0 transition-transform duration-500">
-                <p className="text-[10px] font-black text-purple uppercase tracking-[0.3em] mb-1">
+
+            <div className="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition duration-300 flex items-end">
+              <div className="p-4 w-full bg-linear-to-t from-black/70 to-transparent">
+                <p className="text-sm font-semibold text-purple-400">
                   {item.category}
                 </p>
-                <div className="h-0.5 w-8 bg-purple/50"></div>
               </div>
             </div>
           </Motion.div>
         ))}
       </div>
- 
+
       {/* 🔥 View All Button */}
       {activeCategory === "All" && (
-        <div className="text-center mt-12">
+        <div className="text-center mt-10">
           <button
             onClick={() => setShowAll(!showAll)}
-            className="px-10 py-4 bg-dark-200 border border-white/5 hover:border-purple/30
-            rounded-2xl text-white text-[10px] font-black uppercase tracking-widest transition-all active:scale-95"
+            className="px-6 py-3 bg-purple-600 hover:bg-purple-700 
+            rounded-full text-white font-semibold transition duration-300"
           >
-            {showAll ? "Collapse Collection" : "Expand Collection"}
+            {showAll ? "Show Less" : "View All"}
           </button>
         </div>
       )}

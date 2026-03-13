@@ -9,8 +9,8 @@ const AdminSidebar = () => {
 
     const menuItems = [
         { name: 'Dashboard', path: '/admin/dashboard', icon: <FaChartPie /> },
-        { name: 'Members', path: '/admin/users', icon: <FaUsers /> },
-        { name: 'Trainers', path: '/admin/trainers', icon: <FaDumbbell /> },
+        { name: 'Manage Users', path: '/admin/users', icon: <FaUsers /> },
+        { name: 'Manage Trainers', path: '/admin/trainers', icon: <FaDumbbell /> },
         { name: 'Gym Plans', path: '/admin/plans', icon: <FaClipboardList /> },
         { name: 'Attendance', path: '/admin/attendance', icon: <FaUserCheck /> },
         { name: 'Testimonials', path: '/admin/testimonials', icon: <FaCommentAlt /> },
@@ -20,16 +20,19 @@ const AdminSidebar = () => {
     const toggleSidebar = () => setIsOpen(!isOpen);
 
     const SidebarContent = () => (
-        <div className="flex flex-col h-full">
+        <div className="flex flex-col h-full pb-10">
             {/* Logo Section */}
-            <div className="py-8 px-6 flex items-center gap-3 border-b border-white/10 mb-6">
-                <div className="w-10 h-10 bg-purple-600 rounded-lg flex items-center justify-center text-white">
-                    <FaDumbbell size={20} />
+            <div className="py-8 px-4 flex items-center gap-3 border-b border-white/5 mb-6">
+                <div className="w-10 h-10 bg-purple rounded-xl flex items-center justify-center shadow-lg shadow-purple/30">
+                    <FaDumbbell className="text-white text-xl" />
                 </div>
-                <h2 className="text-white font-bold text-lg tracking-tight">GYM<span className="text-purple-600">PORTAL</span></h2>
+                <div>
+                    <h2 className="text-white font-bold text-lg leading-tight tracking-tight">FITNESS<span className="text-purple">CLUB</span></h2>
+                    <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">Administrator</p>
+                </div>
             </div>
 
-            <div className="space-y-1 flex-1 px-3">
+            <div className="space-y-2 flex-1">
                 {menuItems.map((item) => {
                     const isActive = location.pathname === item.path;
                     return (
@@ -37,25 +40,25 @@ const AdminSidebar = () => {
                             key={item.name}
                             to={item.path}
                             onClick={() => setIsOpen(false)}
-                            className={`flex items-center gap-4 px-4 py-3 rounded-xl transition-all ${isActive
-                                ? 'bg-purple-600 text-white'
-                                : 'text-gray-400 hover:text-white hover:bg-white/5'
+                            className={`flex items-center gap-4 px-4 py-3 rounded-2xl transition-all duration-300 ${isActive
+                                ? 'bg-purple text-white shadow-xl shadow-purple/20'
+                                : 'text-gray-400 hover:bg-white/5 hover:text-white'
                                 }`}
                         >
-                            <span className="text-lg">{item.icon}</span>
-                            <span className="font-semibold text-sm">{item.name}</span>
+                            <span className="text-xl">{item.icon}</span>
+                            <span className="font-bold text-[11px] uppercase tracking-[0.15em]">{item.name}</span>
                         </Link>
                     );
                 })}
             </div>
 
-            <div className="mt-auto py-6 border-t border-white/10 px-3">
+            <div className="mt-auto pt-6 border-t border-white/5">
                 <Link
                     to="/"
-                    className="flex items-center gap-4 px-4 py-3 text-gray-400 hover:text-red-500 rounded-xl transition-all"
+                    className="flex items-center gap-4 px-4 py-3 text-red-400/70 hover:bg-red-500/10 hover:text-red-500 rounded-2xl transition-all duration-300"
                 >
-                    <FaSignOutAlt />
-                    <span className="font-semibold text-sm">Exit Admin</span>
+                    <FaSignOutAlt className="text-xl" />
+                    <span className="font-bold text-[11px] uppercase tracking-wider">Return Home</span>
                 </Link>
             </div>
         </div>
@@ -67,14 +70,14 @@ const AdminSidebar = () => {
             <div className="fixed top-6 left-6 z-[60] lg:hidden">
                 <button
                     onClick={toggleSidebar}
-                    className="p-3 bg-purple-600 text-white rounded-xl shadow-lg"
+                    className="p-3 bg-purple text-white rounded-xl shadow-xl shadow-purple/20 hover:scale-105 active:scale-95 transition-all"
                 >
                     {isOpen ? <FaTimes size={20} /> : <FaBars size={20} />}
                 </button>
             </div>
 
             {/* Desktop Sidebar */}
-            <div className="hidden lg:block fixed left-0 top-0 h-screen w-72 bg-[#0a0a0a] border-r border-white/10 z-50">
+            <div className="hidden lg:block fixed left-0 top-0 h-screen w-72 bg-dark-100 border-r border-white/5 z-50 px-6">
                 <SidebarContent />
             </div>
 
@@ -87,14 +90,14 @@ const AdminSidebar = () => {
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
                             onClick={toggleSidebar}
-                            className="fixed inset-0 bg-black/60 z-[55] lg:hidden"
+                            className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[55] lg:hidden"
                         />
                         <motion.div
                             initial={{ x: '-100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '-100%' }}
                             transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                            className="fixed left-0 top-0 h-screen w-72 bg-[#0c0c0c] z-[58] lg:hidden border-r border-white/10 shadow-2xl"
+                            className="fixed left-0 top-0 h-screen w-72 bg-dark-100/95 backdrop-blur-xl z-[58] px-6 lg:hidden border-r border-white/5 shadow-2xl"
                         >
                             <SidebarContent />
                         </motion.div>

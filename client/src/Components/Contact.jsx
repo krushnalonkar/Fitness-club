@@ -75,7 +75,7 @@ function Contact() {
     return (
         <section
             id="contact"
-            className="bg-[#0c0c0c] text-white py-20 px-6 md:px-20"
+            className="bg-dark-200 text-white py-20 px-6 md:px-20"
         >
             <Motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -85,123 +85,134 @@ function Contact() {
                 className="max-w-7xl mx-auto"
             >
                 {/* Heading */}
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl md:text-5xl font-bold">
-                        Contact <span className="text-purple-600">Us</span>
+                <div className="text-center mb-16">
+                    <h2 className="text-3xl md:text-4xl font-bold">
+                        Get In <span className="text-purple-500">Touch</span>
                     </h2>
-                    <p className="text-gray-400 mt-4 max-w-xl mx-auto text-sm md:text-base">
-                        Have questions or need assistance? Feel free to reach out to us.
+                    <p className="text-gray-400 mt-4">
+                        Have questions? Contact us anytime.
                     </p>
                 </div>
- 
-                <div className="grid md:grid-cols-2 gap-10 items-start max-w-6xl mx-auto">
- 
-                    {/* LEFT SIDE */}
-                    <div className="space-y-6">
-                        <div className="bg-[#111] p-8 rounded-xl border border-white/5 space-y-6">
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center text-purple-600">
-                                    <FaMapMarkerAlt size={18} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-bold uppercase text-gray-500 mb-1">Our Location</h4>
-                                    <p className="text-white text-sm">
-                                        Laksmi Nagar Parvti Pune 411009
-                                    </p>
-                                </div>
-                            </div>
- 
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center text-purple-600">
-                                    <FaPhoneAlt size={16} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-bold uppercase text-gray-500 mb-1">Call Us</h4>
-                                    <p className="text-white text-sm">+91 7822061312</p>
-                                </div>
-                            </div>
- 
-                            <div className="flex items-start gap-4">
-                                <div className="w-10 h-10 bg-purple-600/20 rounded-lg flex items-center justify-center text-purple-600">
-                                    <FaEnvelope size={16} />
-                                </div>
-                                <div>
-                                    <h4 className="text-xs font-bold uppercase text-gray-500 mb-1">Email Us</h4>
-                                    <p className="text-white text-sm">lonkarkrushna13@gmail.com</p>
-                                </div>
-                            </div>
- 
-                            <div className="pt-6 border-t border-white/5">
-                                <h4 className="text-xs font-bold uppercase text-gray-500 mb-4">Follow Us</h4>
-                                <div className="flex gap-3">
-                                    {[
-                                        { icon: <FaFacebookF />, link: "#" },
-                                        { icon: <FaInstagram />, link: "#" },
-                                        { icon: <FaTwitter />, link: "#" }
-                                    ].map((social, i) => (
-                                        <a
-                                            key={i}
-                                            href={social.link}
-                                            className="w-10 h-10 bg-white/5 border border-white/5 rounded-lg flex items-center justify-center text-gray-400 hover:bg-purple-600 hover:text-white transition-all"
-                                        >
-                                            {social.icon}
-                                        </a>
-                                    ))}
-                                </div>
+
+                <div className="grid md:grid-cols-2 gap-12 items-start">
+
+                    {/* ✅ LEFT SIDE */}
+                    <div className="space-y-8">
+
+                        <div className="flex items-start gap-4">
+                            <FaMapMarkerAlt className="text-purple-500 text-xl mt-1" />
+                            <div>
+                                <h4 className="font-semibold">Our Location</h4>
+                                <p className="text-gray-400">
+                                    Laksmi Nagar Parvti Pune 411009
+                                </p>
                             </div>
                         </div>
+
+                        <div className="flex items-start gap-4">
+                            <FaPhoneAlt className="text-purple-500 text-xl mt-1" />
+                            <div>
+                                <h4 className="font-semibold">Phone</h4>
+                                <p className="text-gray-400">+91 7822061312</p>
+                            </div>
+                        </div>
+
+                        <div className="flex items-start gap-4">
+                            <FaEnvelope className="text-purple-500 text-xl mt-1" />
+                            <div>
+                                <h4 className="font-semibold">Email</h4>
+                                <p className="text-gray-400">lonkarkrushna13@gmail.com</p>
+                            </div>
+                        </div>
+
+                        {/* 🔥 SOCIAL MEDIA ICONS (ADDED AT BOTTOM) */}
+                        <div className="pt-4">
+                            <h4 className="font-semibold mb-3">Follow Us</h4>
+                            <div className="flex gap-4">
+                                <a
+                                    href="#"
+                                    className="bg-dark-300 p-3 rounded-full hover:bg-purple-600 transition duration-300 cursor-pointer"
+                                >
+                                    <FaFacebookF />
+                                </a>
+                                <a
+                                    href="#"
+                                    className="bg-dark-300 p-3 rounded-full hover:bg-purple-600 transition duration-300 cursor-pointer"
+                                >
+                                    <FaInstagram />
+                                </a>
+                                <a
+                                    href="#"
+                                    className="bg-dark-300 p-3 rounded-full hover:bg-purple-600 transition duration-300 cursor-pointer"
+                                >
+                                    <FaTwitter />
+                                </a>
+                            </div>
+                        </div>
+
                     </div>
- 
-                    <div className="w-full">
-                        <form
-                            onSubmit={handleSubmit}
-                            className="bg-[#111] p-8 rounded-xl border border-white/5 space-y-4"
-                        >
-                            <input
-                                type="text"
-                                name="name"
-                                placeholder="Your Name"
-                                value={formData.name}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-purple-600 focus:outline-none text-sm text-white transition-all"
-                            />
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="Email Address"
-                                value={formData.email}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-purple-600 focus:outline-none text-sm text-white transition-all"
-                            />
-                            <textarea
-                                name="message"
-                                rows="4"
-                                placeholder="Your Message"
-                                value={formData.message}
-                                onChange={handleChange}
-                                required
-                                className="w-full px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-purple-600 focus:outline-none text-sm text-white transition-all resize-none"
-                            />
- 
-                            {error && (
-                                <p className="text-red-500 text-xs py-2">{error}</p>
-                            )}
- 
-                            {success && (
-                                <p className="text-green-500 text-xs py-2">{success}</p>
-                            )}
- 
-                            <button
-                                type="submit"
-                                disabled={submitting}
-                                className="w-full py-3 bg-purple-600 hover:bg-purple-700 text-white font-bold rounded-lg transition disabled:opacity-50"
+
+                    <div className="flex justify-center">
+                        <div className="w-full max-w-lg">
+                            <form
+                                onSubmit={handleSubmit}
+                                className="bg-dark-300/20 p-8 rounded-2xl shadow-xl border border-white/5 space-y-6"
                             >
-                                {submitting ? "Sending..." : "Send Message"}
-                            </button>
-                        </form>
+                                <h3 className="text-xl font-bold text-center mb-4 uppercase tracking-tight">
+                                    Send Us a <span className="text-purple">Message</span>
+                                </h3>
+
+                                <div className="space-y-4">
+                                    <input
+                                        type="text"
+                                        name="name"
+                                        placeholder="Your Name"
+                                        value={formData.name}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl bg-dark-400/20 border border-white/5 focus:border-purple focus:outline-none text-sm transition-all duration-300"
+                                    />
+
+                                    <input
+                                        type="email"
+                                        name="email"
+                                        placeholder="Your Email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl bg-dark-400/20 border border-white/5 focus:border-purple focus:outline-none text-sm transition-all duration-300"
+                                    />
+
+                                    <textarea
+                                        name="message"
+                                        rows="4"
+                                        placeholder="Your Message"
+                                        value={formData.message}
+                                        onChange={handleChange}
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl bg-dark-400/20 border border-white/5 focus:border-purple focus:outline-none text-sm transition-all duration-300 resize-none"
+                                    />
+                                </div>
+
+                                {error && (
+                                    <p className="text-red-500/80 text-xs text-center font-medium bg-red-500/5 py-2 rounded-lg">{error}</p>
+                                )}
+
+                                {success && (
+                                    <p className="text-green-500/80 text-xs text-center font-medium bg-green-500/5 py-2 rounded-lg">{success}</p>
+                                )}
+
+                                <button
+                                    type="submit"
+                                    disabled={submitting}
+                                    className="w-full py-3 rounded-xl font-bold bg-purple/90 hover:bg-purple transition text-sm cursor-pointer disabled:opacity-50 shadow-lg shadow-purple/10"
+                                >
+                                    {submitting ? "Sending..." : "Send Message"}
+                                </button>
+                            </form>
+                        </div>
                     </div>
+
                 </div>
             </Motion.div>
         </section>

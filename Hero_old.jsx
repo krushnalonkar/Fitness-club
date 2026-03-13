@@ -1,4 +1,4 @@
-import React, { useRef, useContext } from "react";
+﻿import React, { useRef, useContext } from "react";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
@@ -52,7 +52,7 @@ function Hero() {
                         swiper.params.navigation.nextEl = nextRef.current;
                     }
                 }}
-                className="h-screen"  // 🔥 Height increased from 80vh to 90vh
+                className="h-screen"  // ≡ƒöÑ Height increased from 80vh to 90vh
             >
                 {slides.map((slide, index) => (
                     <SwiperSlide key={index}>

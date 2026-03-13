@@ -118,14 +118,22 @@ const Navbar = () => {
 
     return (
         <>
-            <nav className='fixed w-full z-50 bg-dark-100/90 backdrop-blur-md py-4 px-4 md:px-8 shadow-2xl border-b border-white/5'>
-                <div className='container mx-auto flex justify-between items-center'>
-                    <div className="flex items-center gap-3">
+            <nav className='fixed w-full z-50 bg-dark-100/90 backdrop-blur-sm py-4 px-8 shadow-lg'>
+                <div className='container mx-auto flex justify-between item-center'>
+                    <div className="flex flex-col items-center">
                         {/* Text */}
-                        <Link to="/" className="text-2xl md:text-3xl font-bold text-white hover:opacity-90 transition-all flex items-center gap-2">
-                             <FaDumbbell className="text-purple text-2xl md:text-3xl" />
-                             <span>Fitness<span className="text-purple">Club</span></span>
+                        <Link to="/" className="text-3xl font-bold text-white hover:opacity-90">
+                            Fitness<span className="text-purple">Club</span>
                         </Link>
+
+                        {/* Dot + Dumbbell row */}
+                        <div className="flex justify-between items-center w-16 mt-1">
+                            {/* Left dot */}
+                            <div className="w-4 h-4 bg-purple rounded-full"></div>
+
+                            {/* Right dumbbell icon */}
+                            <FaDumbbell className="text-white text-2xl" />
+                        </div>
                     </div>
                     <div className='hidden md:flex items-center space-x-8'>
                         <Link to="/" onClick={() => window.scrollTo(0, 0)} className='relative text-white/80 transition duration-300 hover:text-purple group'>
@@ -274,9 +282,9 @@ const Navbar = () => {
                                 animate={{ x: 0 }}
                                 exit={{ x: '100%' }}
                                 transition={{ type: 'spring', damping: 25, stiffness: 200 }}
-                                className='fixed top-0 right-0 w-[80%] max-w-sm h-screen bg-[#0c0c0c] z-[58] md:hidden border-l border-white/10 shadow-2xl overflow-y-auto pt-24 pb-10 px-6'
+                                className='fixed top-0 right-0 w-[80%] max-w-sm h-screen bg-dark-100/95 backdrop-blur-xl z-[58] md:hidden border-l border-white/10 shadow-2xl overflow-y-auto pt-24 pb-10 px-6'
                             >
-                                 <div className='flex flex-col space-y-1'>
+                                <div className='flex flex-col space-y-2'>
                                     {[
                                         { name: 'Home', path: '/' },
                                         { name: 'About', path: '/#about' },
@@ -291,49 +299,56 @@ const Navbar = () => {
                                             key={link.name}
                                             onClick={() => { setShowMenu(false); if (link.name === 'Home') window.scrollTo(0, 0); }}
                                             to={link.path}
-                                            className='text-lg font-bold text-white/90 hover:text-purple py-4 border-b border-white/5 transition-all flex items-center justify-between group'
+                                            className='text-xl text-white/90 hover:text-purple py-3 border-b border-white/5 transition-colors'
                                         >
                                             {link.name}
-                                            <span className="w-1.5 h-1.5 bg-purple rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></span>
                                         </Link>
                                     ))}
- 
-                                    <div className="pt-8 space-y-4">
+
+                                    <div className="pt-6 space-y-4">
                                         {user ? (
-                                            <div className="bg-zinc-900 rounded-xl p-4 border border-white/10">
-                                                <div className="flex items-center gap-4 mb-4">
-                                                    <div className="w-10 h-10 bg-purple-600/20 border border-purple-600/30 rounded-full flex items-center justify-center">
-                                                        <FaUserCircle className="text-2xl text-purple-600" />
-                                                    </div>
-                                                    <div className="text-left w-full overflow-hidden">
-                                                        <p className="text-white font-bold text-sm truncate">{user.name}</p>
-                                                        <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                                            <div className="bg-dark-300/50 rounded-2xl p-4 border border-white/5">
+                                                <div className="flex items-center gap-3 mb-4">
+                                                    <FaUserCircle className="text-4xl text-purple" />
+                                                    <div className="text-left">
+                                                        <p className="text-white font-bold">{user.name}</p>
+                                                        <p className="text-xs text-gray-400 truncate w-32">{user.email}</p>
                                                     </div>
                                                 </div>
-                                                <div className="flex flex-col gap-2">
-                                                    <Link onClick={() => setShowMenu(false)} to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="w-full text-center py-3 bg-purple-600 hover:bg-purple-700 rounded-lg text-white text-xs font-bold transition">
+                                                <div className="grid grid-cols-1 gap-2">
+                                                    <Link onClick={() => setShowMenu(false)} to={user.role === 'admin' ? '/admin/dashboard' : '/dashboard'} className="w-full text-center py-2.5 bg-purple rounded-xl text-white font-semibold">
                                                         Dashboard
                                                     </Link>
-                                                    <button onClick={() => { handleLogout(); setShowMenu(false); }} className="w-full py-3 text-red-500 text-xs font-bold mt-2">
+                                                    <button onClick={() => { handleEditProfileClick(); setShowMenu(false); }} className="w-full py-2.5 bg-dark-400 rounded-xl text-gray-300 font-medium">
+                                                        Update Profile
+                                                    </button>
+                                                    <button onClick={() => { handleLogout(); setShowMenu(false); }} className="w-full py-2.5 text-red-500 font-semibold mt-2">
                                                         Logout
                                                     </button>
                                                 </div>
                                             </div>
                                         ) : (
-                                            <div className="flex flex-col gap-3">
+                                            <div className="flex flex-col gap-4">
                                                 <Link
                                                     onClick={() => setShowMenu(false)}
                                                     to="/login"
-                                                    className="w-full py-3 bg-zinc-800 text-white text-xs font-bold rounded-lg text-center border border-white/10 transition"
+                                                    className="w-full py-3 bg-dark-400 text-white font-semibold rounded-2xl text-center border border-white/5"
                                                 >
                                                     Login
                                                 </Link>
                                                 <Link
                                                     onClick={() => setShowMenu(false)}
                                                     to="/signup"
-                                                    className="w-full py-3 bg-purple-600 text-white text-xs font-bold rounded-lg text-center shadow-lg shadow-purple-600/20 transition"
+                                                    className="w-full py-3 bg-purple text-white font-semibold rounded-2xl text-center shadow-lg shadow-purple/20"
                                                 >
                                                     Sign Up
+                                                </Link>
+                                                <Link
+                                                    onClick={() => setShowMenu(false)}
+                                                    to="/admin/login"
+                                                    className="flex items-center justify-center gap-2 text-purple-400 font-bold uppercase tracking-widest text-xs mt-4"
+                                                >
+                                                    <FaUserShield /> Admin Access
                                                 </Link>
                                             </div>
                                         )}

@@ -15,8 +15,6 @@ import ManageAttendance from './Pages/ManageAttendance'
 import AdminUserDetails from './Pages/AdminUserDetails'
 import ForgotPassword from './Pages/ForgotPassword'
 import ResetPassword from './Pages/ResetPassword'
-import AdminForgotPassword from './Pages/AdminForgotPassword'
-import AdminResetPassword from './Pages/AdminResetPassword'
 import PrivacyPolicy from './Pages/PrivacyPolicy'
 import TermsOfService from './Pages/TermsOfService'
 import Support from './Pages/Support'
@@ -39,8 +37,6 @@ function App() {
         <Route path='/login' element={<Login />} />
         <Route path='/signup' element={<Signup />} />
         <Route path='/admin/login' element={<AdminLogin />} />
-        <Route path='/admin/forgot-password' element={<AdminForgotPassword />} />
-        <Route path='/admin/reset-password' element={<AdminResetPassword />} />
 
         {/* Protected User Routes */}
         <Route path='/dashboard' element={

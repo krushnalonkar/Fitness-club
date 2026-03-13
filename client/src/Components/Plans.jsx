@@ -68,94 +68,96 @@ function Plans() {
                 whileInView={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6 }}
                 viewport={{ once: true }}
-                className="text-center mb-16"
+                className="text-center mb-14"
             >
-                <p className="text-purple font-black uppercase tracking-[0.3em] text-[10px] mb-4">Investment Strategy</p>
-                <h2 className="text-4xl md:text-7xl font-black uppercase tracking-tighter">
-                   Membership <span className="text-purple">Blueprints</span>
+                <h2 className="text-3xl md:text-4xl font-bold">
+                    Our <span className="text-purple-500">Membership Plans</span>
                 </h2>
- 
-                <p className="text-gray-500 mt-4 max-w-xl mx-auto text-sm font-bold uppercase tracking-widest leading-relaxed">
-                   High-performance access protocols for serious athletes only.
+
+                <p className="text-gray-400 mt-4 max-w-2xl mx-auto text-sm md:text-base px-4">
+                    Choose the perfect plan that fits your fitness goals and start your
+                    transformation journey with our expert trainers and modern equipment.
                 </p>
- 
+
                 {bookingStatus.message && (
-                    <div className={`mt-8 px-6 py-4 rounded-2xl text-[10px] uppercase font-black tracking-widest border max-w-md mx-auto ${bookingStatus.type === 'success' ? 'bg-green-500/10 text-green-500 border-green-500/50' : 'bg-red-500/10 text-red-500 border-red-500/50'}`}>
+                    <div className={`mt-6 px-4 py-3 rounded-lg text-sm border max-w-md mx-auto ${bookingStatus.type === 'success' ? 'bg-green-500/10 text-green-500 border-green-500/50' : 'bg-red-500/10 text-red-500 border-red-500/50'}`}>
                         {bookingStatus.message}
                     </div>
                 )}
             </Motion.div>
- 
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 max-w-7xl mx-auto">
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 max-w-7xl mx-auto">
                 {loading ? (
-                    <div className="col-span-full text-center py-20 text-gray-500 uppercase tracking-widest font-bold text-xs">Syncing Plan Data...</div>
+                    <div className="col-span-full text-center py-20 text-gray-400">Loading plans...</div>
                 ) : plans.length > 0 ? (
                     plans.map((plan, index) => (
                         <Motion.div
                             key={plan._id}
-                            initial={{ opacity: 0, y: 30 }}
+                            initial={{ opacity: 0, y: 60 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             transition={{ duration: 0.5, delay: index * 0.1 }}
                             viewport={{ once: true }}
-                            className={`relative rounded-[2.5rem] p-10 border transition-all duration-700 cursor-pointer flex flex-col h-full group
+                            className={`relative rounded-2xl p-6 border transition-all duration-300 cursor-pointer flex flex-col h-full
                 ${plan.popular
-                                    ? "bg-dark-200 border-purple/30 shadow-2xl shadow-purple/10 scale-105 z-10"
-                                    : "bg-dark-200 border-white/5 hover:border-purple/20"
+                                    ? "bg-dark-300 border-purple-500 shadow-[0_0_30px_rgba(139,92,246,0.25)] scale-105 z-10"
+                                    : "bg-dark-300 border-dark-400 hover:border-purple-500 hover:-translate-y-2"
                                 }`}
                         >
                             {plan.popular && (
-                                <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-purple text-white text-[9px] px-6 py-2 rounded-full font-black uppercase tracking-[0.2em] shadow-xl shadow-purple/20">
-                                    Primary Choice
+                                <div className="absolute -top-3 right-4 bg-purple-600 text-white text-[10px] px-3 py-1 rounded-full font-bold uppercase tracking-widest">
+                                    Most Popular
                                 </div>
                             )}
- 
-                            <h3 className="text-[10px] font-black mb-6 text-center uppercase tracking-[0.3em] text-gray-500 group-hover:text-purple transition-colors">
+
+                            <h3 className="text-xl font-semibold mb-3 text-center">
                                 {plan.name}
                             </h3>
- 
-                            <div className="text-center mb-10">
-                                <span className="text-5xl font-black text-white group-hover:scale-110 inline-block transition-transform duration-500">
+
+                            <div className="text-center mb-6">
+                                <span className="text-3xl font-bold text-purple-500">
                                     {plan.price}
                                 </span>
-                                <div className="text-gray-500 text-[9px] font-bold uppercase tracking-widest mt-2">{plan.duration} ACCESS</div>
+                                <span className="text-gray-400 text-sm">
+                                    {plan.duration}
+                                </span>
                             </div>
- 
-                            <ul className="space-y-4 mb-10 flex-grow">
+
+                            <ul className="space-y-3 mb-8 flex-grow">
                                 {plan.features.map((feature, i) => (
                                     <li
                                         key={i}
-                                        className="text-gray-400 text-[10px] font-bold uppercase tracking-widest flex items-center gap-3"
+                                        className="text-gray-300 text-sm flex items-center gap-2"
                                     >
-                                        <div className="w-1 h-1 bg-purple rounded-full"></div> {feature}
+                                        <span className="text-purple-500">✔</span> {feature}
                                     </li>
                                 ))}
                             </ul>
- 
+
                             {user ? (
                                 <button
                                     onClick={() => handleBookPlan(plan)}
                                     disabled={isBooking || !!activePlan}
-                                    className={`w-full text-center py-4 rounded-2xl font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 ${activePlan?.planName === plan.name
-                                        ? 'bg-dark-300 text-gray-600 border border-white/5 cursor-not-allowed'
+                                    className={`w-full text-center py-2.5 rounded-xl font-semibold transition duration-300 ${activePlan?.planName === plan.name
+                                        ? 'bg-dark-400 text-gray-400 cursor-not-allowed'
                                         : (!!activePlan || isBooking)
-                                            ? 'bg-purple/20 text-purple/40 cursor-not-allowed'
-                                            : 'bg-purple hover:bg-purple-700 text-white cursor-pointer shadow-xl shadow-purple/10'
+                                            ? 'bg-purple-600 text-white cursor-not-allowed opacity-50'
+                                            : 'bg-purple-600 hover:bg-purple-700 text-white cursor-pointer shadow-lg shadow-purple/20'
                                         }`}
                                 >
                                     {activePlan?.planName === plan.name
-                                        ? 'Active Authorization'
-                                        : isBooking ? 'Processing...' : 'Authorize Plan'}
+                                        ? 'Active Plan Exists'
+                                        : isBooking ? 'Processing...' : 'Buy Plan'}
                                 </button>
                             ) : (
-                                <Link to="/login" className="w-full text-center py-4 rounded-2xl bg-purple hover:bg-purple-700 text-white font-black uppercase tracking-widest text-[10px] transition-all active:scale-95 shadow-xl shadow-purple/10 cursor-pointer">
-                                    Initialize Access
+                                <Link to="/login" className="w-full text-center py-2.5 rounded-xl bg-purple-600 hover:bg-purple-700 text-white font-semibold transition duration-300 cursor-pointer shadow-lg shadow-purple/20">
+                                    Buy Plan
                                 </Link>
                             )}
                         </Motion.div>
                     ))
                 ) : (
-                    <div className="col-span-full text-center py-20 text-gray-500 uppercase tracking-widest font-black text-xs">
-                        Deployment Pending. Check Back Soon.
+                    <div className="col-span-full text-center py-20 text-gray-500">
+                        Stay tuned! Gym plans are coming soon.
                     </div>
                 )}
             </div>

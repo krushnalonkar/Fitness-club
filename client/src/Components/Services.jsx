@@ -11,33 +11,33 @@ import {
 
 const services = [
   {
-    icon: <Dumbbell size={32} />,
+    icon: <Dumbbell size={40} />,
     title: "Strength Training",
     desc: "Build muscle and increase strength with modern equipment and expert guidance.",
   },
   {
-    icon: <Flame size={32} />,
+    icon: <Flame size={40} />,
     title: "Fat Loss Programs",
     desc: "Customized fat loss workouts designed to help you burn calories effectively.",
   },
   {
-    icon: <HeartPulse size={32} />,
+    icon: <HeartPulse size={40} />,
     title: "Cardio Training",
     desc: "Improve endurance and heart health with high-intensity cardio sessions.",
   },
   {
-    icon: <Users size={32} />,
+    icon: <Users size={40} />,
     title: "Personal Training",
     desc: "Get one-on-one coaching from certified trainers for faster results.",
   },
   {
-    icon: <Apple size={32} />,
+    icon: <Apple size={40} />,
     title: "Diet & Nutrition",
     desc: "Personalized diet plans to support your fitness and transformation goals.",
   },
   {
-    icon: <Timer size={32} />,
-    title: "Workout Plans",
+    icon: <Timer size={40} />,
+    title: "Flexible Workout Plans",
     desc: "Workout schedules designed to match your daily routine and lifestyle.",
   },
 ];
@@ -46,7 +46,7 @@ function Services() {
   return (
     <section
       id="services"
-      className="bg-[#0c0c0c] text-white py-20 px-6 md:px-20"
+      className="bg-dark-300 text-white py-24 px-6 md:px-20"
     >
       {/* Section Header */}
       <Motion.div
@@ -54,38 +54,40 @@ function Services() {
         whileInView={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
         viewport={{ once: true }}
-        className="text-center mb-12"
+        className="text-center mb-16"
       >
         <h2 className="text-3xl md:text-5xl font-bold">
-          Our <span className="text-purple-600">Services</span>
+          Our <span className="text-purple-500">Services</span>
         </h2>
-        <p className="text-gray-400 mt-4 max-w-xl mx-auto text-sm md:text-base">
-          We provide a wide range of fitness services to help you achieve your goals.
+        <p className="text-gray-400 mt-4 max-w-2xl mx-auto">
+          We provide world-class fitness services to help you achieve your dream
+          physique and live a healthier lifestyle.
         </p>
       </Motion.div>
- 
+
       {/* Services Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 max-w-7xl mx-auto">
+      <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
         {services.map((service, index) => (
           <Motion.div
             key={index}
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: index * 0.05 }}
+            transition={{ duration: 0.5, delay: index * 0.1 }}
             viewport={{ once: true }}
-            className="bg-[#111] border border-white/5 rounded-xl p-8 
-                       hover:border-purple-600/50 transition-all duration-300 group cursor-pointer"
+            className="bg-dark-200 border border-dark-400 rounded-2xl p-8 
+                       hover:border-purple-500 hover:shadow-[0_0_30px_rgba(139,92,246,0.2)]
+                       transition duration-300 group cursor-pointer"
           >
             {/* Icon */}
-            <div className="w-14 h-14 bg-white/5 rounded-lg flex items-center justify-center text-purple-600 mb-6 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
+            <div className="text-purple-500 mb-6 group-hover:scale-110 transition duration-300">
               {service.icon}
             </div>
- 
+
             {/* Title */}
-            <h3 className="text-xl font-bold mb-3 text-white">
+            <h3 className="text-xl font-semibold mb-3">
               {service.title}
             </h3>
- 
+
             {/* Description */}
             <p className="text-gray-400 text-sm leading-relaxed">
               {service.desc}
