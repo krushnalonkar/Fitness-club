@@ -100,41 +100,34 @@ const replyToInquiry = async (req, res) => {
                 console.log(`Internal Notification sent to registered member: ${registeredUser.name}`);
             }
 
-            // 📩 EMAIL SENDING (via NodeMailer)
-            const hasCreds = process.env.EMAIL_USER && 
-                           process.env.EMAIL_PASS && 
-                           process.env.EMAIL_PASS !== 'your_app_password_here';
+            // 🔥 SEND RESPONSE EARLY
+            // This makes the UI instant and "SENDING..." will disappear immediately.
+            res.json({ message: 'Reply saved! Email sending in background... 📨' });
+
+            // 📩 BACKGROUND EMAIL SENDING
+            const hasCreds = process.env.EMAIL_USER &&
+                process.env.EMAIL_PASS &&
+                process.env.EMAIL_PASS !== 'your_app_password_here';
 
             if (hasCreds) {
-                try {
-                    console.log(`📡 Attempting to send reply email to: ${inquiry.email}`);
-                    await sendEmail({
-                        email: inquiry.email.trim(),
+                const recipientEmail = (inquiry.email || "").trim().toLowerCase();
+                if (recipientEmail) {
+                    console.log(`📡 Background task: Sending email to ${recipientEmail}`);
+                    sendEmail({
+                        email: recipientEmail,
                         name: inquiry.name,
                         subject: `Re: ${inquiry.subject}`,
                         originSubject: inquiry.subject,
                         message: reply
-                    });
-                    console.log(`✅ Email successfully sent to: ${inquiry.email}`);
-                } catch (emailErr) {
-                    console.error("❌ NodeMailer Error:", emailErr.message);
-                    // We don't return 500 here because the reply is already saved in DB
-                    // but we can add a warning flag to the response
-                    return res.json({ 
-                        message: 'Reply saved, but email delivery failed. Check SMTP settings.',
-                        emailError: true 
+                    }).then(() => {
+                        console.log(`✅ Background email delivered to: ${recipientEmail}`);
+                    }).catch((emailErr) => {
+                        console.error("❌ Background Mailer Error:", emailErr.message);
                     });
                 }
             } else {
-                console.warn(`🛑 Skipping Email: SMTP Credentials (EMAIL_USER/EMAIL_PASS) missing in .env`);
-                return res.json({ 
-                    message: 'Reply saved, but email was not sent (No SMTP credentials).',
-                    emailError: true
-                });
+                console.warn(`🛑 SMTP Credentials missing. Background email skipped.`);
             }
-
-            // 🔥 FINAL SUCCESS RESPONSE
-            res.json({ message: 'Reply sent successfully and email delivered! ✅' });
         } else {
             res.status(404).json({ message: 'Inquiry not found' });
         }
